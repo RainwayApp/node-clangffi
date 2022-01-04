@@ -27,9 +27,6 @@ jobs:
         run: curl -LJO "https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/clang+llvm-13.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz"
       - name: Extract libclang v13.0.0
         run: tar -xvf *.tar.xz
-      - name: Set env variables
-        run: echo "LIBCLANG_LIB_PATH=${PWD}/clang+llvm-13.0.0-x86_64-linux-gnu-ubuntu-20.04/lib/libclang.so" >> $GITHUB_ENV && echo "C_INCLUDE_PATH=${PWD}/clang+llvm-13.0.0-x86_64-linux-gnu-ubuntu-20.04/lib/clang/13.0.0/include" >> $GITHUB_ENV
-      - run: env
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
@@ -38,4 +35,7 @@ jobs:
       - run: npm run bootstrap
       - run: npm run build
       - run: npm run bootstrap
+      - name: Set env variables
+        run: echo "LIBCLANG_LIB_PATH=${PWD}/clang+llvm-13.0.0-x86_64-linux-gnu-ubuntu-20.04/lib/libclang.so" >> $GITHUB_ENV && echo "C_INCLUDE_PATH=${PWD}/clang+llvm-13.0.0-x86_64-linux-gnu-ubuntu-20.04/lib/clang/13.0.0/include" >> $GITHUB_ENV
+      - run: env
       - run: npm test

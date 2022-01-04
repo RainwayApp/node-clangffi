@@ -1,0 +1,20 @@
+{
+  "packages": {
+    "packages/clangffi": {
+      "releaseType": "node",
+      "draft": false,
+      "bumpMinorPreMajor": false,
+      "bumpPatchForMinorPreMajor": false,
+      "changelogPath": "packages/clangffi/CHANGELOG.md",
+      "versioning": "default"
+    },
+    "packages/libclang-bindings": {
+      "releaseType": "node",
+      "draft": false,
+      "bumpMinorPreMajor": false,
+      "bumpPatchForMinorPreMajor": false,
+      "changelogPath": "packages/libclang-bindings/CHANGELOG.md",
+      "versioning": "default"
+    }
+  }
+}

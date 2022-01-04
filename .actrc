@@ -1,0 +1,2 @@
+-P ubuntu-20.04=ghcr.io/catthehacker/ubuntu:full-20.04
+--bind

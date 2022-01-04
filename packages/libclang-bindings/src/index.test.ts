@@ -20,7 +20,8 @@ const defaultLibPath =
 
 describe("libclang", () => {
   beforeAll(() => {
-    loadLibClang(defaultLibPath);
+    const possibleUserPath = process.env["LIBCLANG_LIB_PATH"] ?? defaultLibPath;
+    loadLibClang(possibleUserPath);
   });
 
   // ensures we can run against "ourselves" - the version of libclang that this projects bindings were built from.
@@ -70,7 +71,8 @@ describe("libclang", () => {
           data.sourcePath
         );
 
-        data.sourcePath = sourcePath;
+        // normalize to always use '/' for path sep
+        data.sourcePath = sourcePath.replace(/\\/g, "/");
 
         // store the decl model for assertion later
         decls.push(data);

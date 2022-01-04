@@ -5,30 +5,43 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     strategy:
       matrix:
-        node-version: [16.x, 17.x]
+        node-version: [17.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run bootstrap
-    - run: npm run build
-    - run: npm run bootstrap
-    - run: npm test
+      - uses: actions/checkout@v2
+        with:
+          submodules: "recursive"
+      # We download clang v13 since that's what a user would do and we want to ensure compat
+      # Since we also have it as a submodule, we could built it instead
+      - name: Download libclang v13.0.0
+        run: curl -LJO "https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/clang+llvm-13.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz"
+      - name: Extract libclang v13.0.0
+        run: tar -xvf *.tar.xz
+
+      # Configure node, install deps, transpile typescript
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm ci
+      - run: npm run bootstrap
+      - run: npm run build
+      - run: npm run bootstrap
+
+      # Prepare for test, and test
+      - name: Set env variables
+        run: echo "LIBCLANG_LIB_PATH=${PWD}/clang+llvm-13.0.0-x86_64-linux-gnu-ubuntu-20.04/lib/libclang.so" >> $GITHUB_ENV && echo "C_INCLUDE_PATH=${PWD}/clang+llvm-13.0.0-x86_64-linux-gnu-ubuntu-20.04/lib/clang/13.0.0/include" >> $GITHUB_ENV
+      - run: env
+      - run: npm test

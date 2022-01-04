@@ -12,9 +12,7 @@ on:
 
 jobs:
   build:
-    # TODO(bengreenier): once GH has 20.04 we should go to that
-    # Want this to match a supported llvm target
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
 
     strategy:
       matrix:
@@ -26,11 +24,11 @@ jobs:
         with:
           submodules: "recursive"
       - name: Download libclang v13.0.0
-        run: curl -LJO "https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/clang+llvm-13.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz"
+        run: curl -LJO "https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/clang+llvm-13.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz"
       - name: Extract libclang v13.0.0
         run: tar -xf *.tar.xz
       - name: Add libclang v13.0.0 to PATH
-        run: echo "${PWD}/clang+llvm-13.0.0-x86_64-linux-gnu-ubuntu-16.04/lib" >> $GITHUB_PATH
+        run: echo "${PWD}/clang+llvm-13.0.0-x86_64-linux-gnu-ubuntu-20.04/lib" >> $GITHUB_PATH
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:

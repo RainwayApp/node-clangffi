@@ -20,7 +20,8 @@ const defaultLibPath =
 
 describe("libclang", () => {
   beforeAll(() => {
-    loadLibClang(defaultLibPath);
+    const possibleUserPath = process.env["LIBCLANG_LIB_PATH"] ?? defaultLibPath;
+    loadLibClang(possibleUserPath);
   });
 
   // ensures we can run against "ourselves" - the version of libclang that this projects bindings were built from.

@@ -97,15 +97,18 @@ export class Parser {
       }
 
       const sp = formatPath(decl.sourcePath);
+      const logSymbolName = resolveName(decl);
 
       // skip symbols that aren't in our purview
       if (
         sp != this.opts.path &&
         !this.opts.additionalFiles.some((f) => formatPath(f) == sp)
       ) {
-        log(`skip '${resolveName(decl)}' from '${sp}'.`);
+        log(`skip '${logSymbolName}' from '${sp}'.`);
         return CXChildVisitResult.CXChildVisit_Continue;
       }
+
+      log(`processing '${logSymbolName}'`);
 
       // openers
       if (decl instanceof EnumDecl) {
@@ -160,6 +163,8 @@ export class Parser {
       } else if (decl instanceof ParamDecl) {
         this.opts.generator.closeFunctionParam(decl as ParamDecl);
       }
+
+      log(`finished '${logSymbolName}'`);
     } catch (e) {
       log(e);
 

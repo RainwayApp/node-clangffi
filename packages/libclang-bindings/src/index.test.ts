@@ -71,7 +71,8 @@ describe("libclang", () => {
           data.sourcePath
         );
 
-        data.sourcePath = sourcePath;
+        // normalize to always use '/' for path sep
+        data.sourcePath = sourcePath.replace(/\\/g, "/");
 
         // store the decl model for assertion later
         decls.push(data);

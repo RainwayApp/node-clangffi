@@ -8,7 +8,7 @@ Tools to generate Typescript FFI bindings for C/C++ libraries using [libclang](h
 - `libclang-bindings` library for [libclang](https://clang.llvm.org/doxygen/group__CINDEX.html) bindings.
 - Generates Typescript typings and [ref-napi](https://github.com/node-ffi-napi/ref-napi) types.
 - Bring your own `libclang` binary.
-- Validated against [llvm-project 13.0.0](./vendor/llvm-project).
+- Validated against [llvm-project 13.0.0](./vendor).
 
 See the following packages for more information:
 

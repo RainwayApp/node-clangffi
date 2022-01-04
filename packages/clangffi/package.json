@@ -2,7 +2,7 @@
   "name": "clangffi",
   "version": "1.0.0",
   "description": "Generate Typescript FFI bindings for C/C++ libraries using libclang and ffi-napi",
-  "main": "dist/index.js",
+  "main": "dist/lib/index.js",
   "bin": {
     "clangffi": "dist/bin/clangffi.js"
   },
@@ -44,5 +44,8 @@
     "debug": "^4.3.3",
     "prettier": "^2.5.1",
     "yargs": "^17.3.1"
+  },
+  "engines": {
+    "node": "^17.x"
   }
 }

@@ -43,5 +43,8 @@
     "ref-array-di": "^1.2.2",
     "ref-napi": "^3.0.3",
     "ref-struct-di": "^1.1.1"
+  },
+  "engines": {
+    "node": "^17.x"
   }
 }

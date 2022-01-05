@@ -216,14 +216,15 @@ export class TsGen implements ISourceGenerator {
 
     const typeClass = decl.typeClass;
 
-    if (
-      typeClass.isFunctionType &&
-      typeClass.returnType &&
-      typeClass.paramTypes
-    ) {
-      const params = typeClass.paramTypes
-        .map((p) => resolveType(p, this.refResolver))
-        .join(",");
+    if (typeClass.isFunctionType && typeClass.returnType) {
+      let params = "";
+
+      // if we actually have params, overwrite the empty string
+      if (typeClass.paramTypes && typeClass.paramTypes.length > 0) {
+        params = typeClass.paramTypes
+          .map((p) => resolveType(p, this.refResolver))
+          .join(",");
+      }
 
       this.fnBuilder.appendLine(
         `"${name}": [${resolveType(

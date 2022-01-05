@@ -88,10 +88,14 @@ export class TSResolver implements ITypeNameResolver {
     );
 
     // ts needs names before types so generate that signature
-    const sig = params
-      .split(",")
-      .map((p, i) => `arg${i}: ${p}`.trim())
-      .join(", ");
+    // if `params.length` is zero we have no params so just use an empty string
+    const sig =
+      params.length == 0
+        ? ""
+        : params
+            .split(",")
+            .map((p, i) => `arg${i}: ${p}`.trim())
+            .join(", ");
 
     return `(${sig}) => ${ret}`;
   }
@@ -245,13 +249,15 @@ export function resolveType(type: Type, resolver: ITypeNameResolver): string {
     );
   }
   // function
-  else if (type.isFunctionType && type.paramTypes && type.returnType) {
+  else if (type.isFunctionType && type.returnType) {
     resolveLog(`${type.name} is fn`);
 
-    // resolve all the params first
-    const params = type.paramTypes
-      .map((p) => resolveType(p, resolver))
-      .join(", ");
+    let params = "";
+
+    // if we actually have params, overwrite the empty string
+    if (type.paramTypes && type.paramTypes.length > 0) {
+      params = type.paramTypes.map((p) => resolveType(p, resolver)).join(", ");
+    }
 
     resolveLog(`${type.name} resolved params`);
 

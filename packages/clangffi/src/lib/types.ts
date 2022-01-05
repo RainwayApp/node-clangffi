@@ -66,6 +66,7 @@ export interface INativeLookupTable {
   // "unclear spec": string,
   "char*": string;
   bool: string;
+  _Bool: string;
   byte: string;
   char: string;
   "signed char": string;

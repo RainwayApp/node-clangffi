@@ -26,6 +26,7 @@ jobs:
       - uses: GoogleCloudPlatform/release-please-action@v2
         id: release
         with:
+          release-type: "node"
           monorepo-tags: true
           manifest-file: ".release-please-manifest.json"
           config-file: "release-please-config.json"

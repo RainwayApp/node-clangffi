@@ -214,7 +214,15 @@ export class TsGen implements ISourceGenerator {
     const name = resolveName(decl);
     log(`openFunction(${name}): begin`);
 
-    const typeClass = decl.typeClass;
+    let typeClass = decl.typeClass;
+
+    // if it's an attributed type we should just access the internal type
+    //
+    // TODO(bengreenier): should we do this for all types? docs on attributed types are weak
+    // i am not sure if this only occurs for function types or if it may occur for other types
+    if (typeClass.isAttributedType && typeClass.modifiedType) {
+      typeClass = typeClass.modifiedType;
+    }
 
     if (
       typeClass.isFunctionType &&

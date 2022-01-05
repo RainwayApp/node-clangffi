@@ -31,6 +31,13 @@ export class Type implements INativeHandle<CXType> {
     return this.spelling;
   }
 
+  get isAttributedType(): boolean {
+    return this.kind == CXTypeKind.CXType_Attributed;
+  }
+  get modifiedType(): Type | undefined {
+    return new Type(lib.clang_Type_getModifiedType(this.type));
+  }
+
   get isCanonical(): boolean {
     return this.kind != CXTypeKind.CXType_Elaborated;
   }

@@ -17,8 +17,7 @@ jobs:
       - uses: google-github-actions/release-please-action@v3
         id: release
         with:
-          default-branch: main
-
+          command: manifest
       # The logic below handles the npm publication:
       - name: Checkout Repository
         if: ${{ steps.release.outputs.releases_created }}

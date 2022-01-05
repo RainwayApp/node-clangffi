@@ -41,6 +41,11 @@ export interface ParserOptions extends Omit<ParseOptions, "index"> {
   additionalFiles: string[];
 
   /**
+   * Additional symbols to include (by name)
+   */
+  additionalSymbols: string[];
+
+  /**
    * The source generator to use
    */
   generator: ISourceGenerator;
@@ -97,18 +102,19 @@ export class Parser {
       }
 
       const sp = formatPath(decl.sourcePath);
-      const logSymbolName = resolveName(decl);
+      const symbolName = resolveName(decl);
+
+      const isAllowedSymbol =
+        this.opts.additionalFiles.some((f) => formatPath(f) == sp) ||
+        this.opts.additionalSymbols.some((s) => s == symbolName);
 
       // skip symbols that aren't in our purview
-      if (
-        sp != this.opts.path &&
-        !this.opts.additionalFiles.some((f) => formatPath(f) == sp)
-      ) {
-        log(`skip '${logSymbolName}' from '${sp}'.`);
+      if (sp != this.opts.path && !isAllowedSymbol) {
+        log(`skip '${symbolName}' from '${sp}'.`);
         return CXChildVisitResult.CXChildVisit_Continue;
       }
 
-      log(`processing '${logSymbolName}'`);
+      log(`processing '${symbolName}'`);
 
       // openers
       if (decl instanceof EnumDecl) {
@@ -164,7 +170,7 @@ export class Parser {
         this.opts.generator.closeFunctionParam(decl as ParamDecl);
       }
 
-      log(`finished '${logSymbolName}'`);
+      log(`finished '${symbolName}'`);
     } catch (e) {
       log(e);
 

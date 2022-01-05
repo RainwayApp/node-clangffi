@@ -4,7 +4,7 @@
   "description": "lerna workspace for clangffi, libclang-bindings tools",
   "scripts": {
     "clangffi": "node packages/clangffi/dist/bin/clangffi.js",
-    "generate-dogfood": "npm run clangffi -- -i vendor/llvm-project/clang/include/clang-c/Index.h -I vendor/llvm-project/clang/include/ -o packages/libclang-bindings/src/libclang.ts",
+    "generate-dogfood": "npm run clangffi -- -i vendor/llvm-project/clang/include/clang-c/Index.h -I vendor/llvm-project/clang/include/ -o packages/libclang-bindings/src/libclang.ts --allow-symbol time_t --allow-symbol __time32_t --allow-symbol __time64_t",
     "bootstrap": "lerna bootstrap",
     "build": "lerna run build --stream",
     "test": "lerna run test --stream -- -- --passWithNoTests"

@@ -33,15 +33,18 @@ const args = yargs(hideBin(process.argv))
   .string("I")
   .array("I")
   .alias("I", "include-directory")
-  .string("allow")
-  .array("allow")
+  .string("allow-file")
+  .array("allow-file")
+  .string("allow-symbol")
+  .array("allow-symbol")
   .default({
     crlf: false,
     "no-prettier": false,
     "no-sibling": false,
     L: "c",
     I: [],
-    allow: [],
+    "allow-file": [],
+    "allow-symbol": [],
   })
   .demandOption("input")
   .demandOption("output")
@@ -51,7 +54,9 @@ const args = yargs(hideBin(process.argv))
     L: "Language to parse input as",
     I: "Additional include directories to use during parsing",
     "lib-path": "The path to the libclang binary to load.",
-    allow: "Additional file paths to allow symbols from",
+    "allow-file": "Additional file paths to allow symbols from",
+    "allow-symbol":
+      "Additional symbol name to allow regardless of it's location",
     crlf: "Use crlf endings instead of lf",
     "no-sibling":
       "Does not include sibling file symbols in the generated bindings",
@@ -66,6 +71,7 @@ if (!(args instanceof Promise)) {
   const fileDir = path.dirname(args.input);
   const lang: Language = args.language == "c" ? Language.C : Language.Cpp;
   const includeDirectories: string[] = args.includeDirectory ?? [];
+  const additionalSymbols: string[] = args.allowSymbol ?? [];
 
   const includeFiles = includeDirectories.flatMap((includeDir) =>
     fs
@@ -81,7 +87,9 @@ if (!(args instanceof Promise)) {
         .map((f) => path.join(fileDir, f))
         .filter((f) => path.extname(f) == ".h");
 
-  const additionalFiles = siblingFiles.concat(includeFiles);
+  const additionalFiles = siblingFiles
+    .concat(includeFiles)
+    .concat(args.allowFile ?? []);
 
   const defaultLibPath =
     process.platform == "win32" ? "libclang.dll" : "libclang";
@@ -96,6 +104,7 @@ if (!(args instanceof Promise)) {
     language: lang,
     additionalFiles,
     includeDirectories,
+    additionalSymbols,
     generator: new TsGen({
       lineEndings: args.crlf ? LineEndings.CRLF : LineEndings.LF,
       usePrettier: args["no-prettier"] ? false : true,

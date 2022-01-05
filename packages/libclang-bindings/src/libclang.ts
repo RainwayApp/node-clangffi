@@ -6,6 +6,9 @@ import refArrayDi, { TypedArray } from "ref-array-di";
 const Struct = refStructDi(ref);
 const Array = refArrayDi(ref);
 const Pointer = ref.refType;
+export type __time32_t = number;
+export type __time64_t = number;
+export type time_t = __time64_t;
 export enum CXErrorCode {
   CXError_Success = 0,
   CXError_Failure = 1,
@@ -1134,6 +1137,9 @@ export type CXFieldVisitor = (
   arg0: CXCursor,
   arg1: CXClientData
 ) => CXVisitorResult;
+export const __time32_tDef = ref.types.long;
+export const __time64_tDef = ref.types.longlong;
+export const time_tDef = __time64_tDef;
 export const CXErrorCodeDef = ref.types.int;
 export const CXStringDef = Struct({
   data: Pointer(ref.types.void),
@@ -1511,7 +1517,7 @@ export function dlopen(libPath: string) {
       [CXIndexDef, ref.types.CString],
     ],
     clang_getFileName: [CXStringDef, [CXFileDef]],
-    clang_getFileTime: [ref.types.longlong, [CXFileDef]],
+    clang_getFileTime: [time_tDef, [CXFileDef]],
     clang_getFileUniqueID: [
       ref.types.int,
       [CXFileDef, Pointer(CXFileUniqueIDDef)],
@@ -1523,7 +1529,7 @@ export function dlopen(libPath: string) {
     clang_getFile: [CXFileDef, [CXTranslationUnitDef, ref.types.CString]],
     clang_getFileContents: [
       ref.types.CString,
-      [CXTranslationUnitDef, CXFileDef, Pointer(ref.types.ulonglong)],
+      [CXTranslationUnitDef, CXFileDef, Pointer(ref.types.size_t)],
     ],
     clang_File_isEqual: [ref.types.int, [CXFileDef, CXFileDef]],
     clang_File_tryGetRealPathName: [CXStringDef, [CXFileDef]],

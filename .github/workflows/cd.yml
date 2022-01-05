@@ -25,6 +25,10 @@ jobs:
       # Use `release-please` to track changes and generate release PRs
       - uses: GoogleCloudPlatform/release-please-action@v2
         id: release
+        with:
+          monorepo-tags: true
+          manifest-file: ".release-please-manifest.json"
+          config-file: "release-please-config.json"
       # The logic below handles the crates.io publication:
       - uses: actions/checkout@v2
         with:

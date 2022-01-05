@@ -4,35 +4,45 @@
 # NPM_TOKEN: <your_token>
 
 name: CD
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push but only for the main branch
   push:
-    branches: [main]
-  # Allows you to run this workflow manually from the Actions tab
+    branches:
+      - main
   workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+  
 jobs:
-  # This workflow contains a single job called "release"
-  release:
-    # The type of runner that the job will run on
+  release-please:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Use `release-please` to track changes and generate release PRs
-      - uses: GoogleCloudPlatform/release-please-action@v2
+      - uses: google-github-actions/release-please-action@v3
         id: release
-      # The logic below handles the crates.io publication:
-      - uses: actions/checkout@v2
         with:
-          submodules: "recursive"
-        # these if statements ensure that a publication only occurs when
-        # a new release is created:
-        if: ${{ steps.release.outputs.release_created }}
-      # TODO(bengreenier): replace with actual publish
-      - run: echo "Would have published!"
-        if: ${{ steps.release.outputs.release_created }}
-      
+          command: manifest
+          token: ${{secrets.GITHUB_TOKEN}}
+          default-branch: main
+
+      # The logic below handles the npm publication:
+      - name: Checkout Repository
+        if: ${{ steps.release.outputs.releases_created }}
+        uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        if: ${{ steps.release.outputs.releases_created }}
+        with:
+          node-version: 17
+          registry-url: 'https://registry.npmjs.org'
+      - name: Build Packages
+        if: ${{ steps.release.outputs.releases_created }}
+        run: |
+          npm install
+          npm run bootstrap
+          npm run build
+
+      # Release Please has already incremented versions and published tags, so we just
+      # need to publish all unpublished versions to NPM here
+      # See: https://github.com/lerna/lerna/tree/main/commands/publish#bump-from-package
+      - name: Publish to NPM
+        if: ${{ steps.release.outputs.releases_created }}
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        run: echo "would publish" #npx lerna publish from-package --no-push --no-private --yes

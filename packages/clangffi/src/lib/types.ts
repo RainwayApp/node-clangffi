@@ -47,11 +47,63 @@ export enum LineEndings {
 }
 
 /**
+ * Represents a lookup table in an `ITypeResolver'
+ */
+export interface INativeLookupTable {
+  [key: string]: string;
+  void: string;
+  int8_t: string;
+  uint8_t: string;
+  int16_t: string;
+  uint16_t: string;
+  int32_t: string;
+  uint32_t: string;
+  int64_t: string;
+  uint64_t: string;
+  float: string;
+  double: string;
+  // "long double": string
+  // "unclear spec": string,
+  "char*": string;
+  bool: string;
+  byte: string;
+  char: string;
+  "signed char": string;
+  uchar: string;
+  "unsigned char": string;
+  short: string;
+  "short int": string;
+  "signed short": string;
+  "signed short int": string;
+  ushort: string;
+  "unsigned short": string;
+  "unsigned short int": string;
+  int: string;
+  signed: string;
+  "signed int": string;
+  unsigned: string;
+  "unsigned int": string;
+  long: string;
+  "long int": string;
+  "signed long": string;
+  "signed long int": string;
+  "unsigned long": string;
+  "unsigned long int": string;
+  "long long": string;
+  "long long int": string;
+  "signed long long": string;
+  "signed long long int": string;
+  "unsigned long long": string;
+  "unsigned long long int": string;
+  size_t: string;
+}
+
+/**
  * A lightweight type resolver for use during generation
  * This allows us to swap between raw TS types and ref types while sharing the type resolution logic
  */
 export interface ITypeNameResolver {
-  lookup: { [key: string]: string };
+  lookup: INativeLookupTable;
   createPointer(str: string): string;
   createArray(str: string): string;
   createEnum(str: string): string;

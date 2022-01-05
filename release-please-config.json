@@ -1,5 +1,4 @@
 {
-  "release-as": "1.0.0",
   "plugins": ["node-workspace"],
   "packages": {
     "packages/clangffi": {

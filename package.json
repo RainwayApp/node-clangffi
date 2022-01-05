@@ -1,5 +1,6 @@
 {
-  "name": "node-clangffi",
+  "name": "node-clangffi-lerna-workspace",
+  "private": "true",
   "version": "1.0.0",
   "description": "lerna workspace for clangffi, libclang-bindings tools",
   "scripts": {

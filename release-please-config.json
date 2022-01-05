@@ -1,6 +1,15 @@
 {
   "plugins": ["node-workspace"],
   "packages": {
+    ".": {
+      "release-as": "1.0.0",
+      "releaseType": "node",
+      "draft": false,
+      "bumpMinorPreMajor": false,
+      "bumpPatchForMinorPreMajor": false,
+      "changelogPath": "CHANGELOG.md",
+      "versioning": "default"
+    },
     "packages/clangffi": {
       "releaseType": "node",
       "draft": false,

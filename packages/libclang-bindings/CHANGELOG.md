@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.1.0](https://github.com/RainwayApp/node-clangffi/compare/libclang-bindings-v1.0.0...libclang-bindings-v1.1.0) (2022-01-05)
+
+
+### Features
+
+* **attributed-type:** support attributed fns ([#23](https://github.com/RainwayApp/node-clangffi/issues/23)) ([62b5c0c](https://github.com/RainwayApp/node-clangffi/commit/62b5c0cb48ee997609e3f31448aef08d8d7c999f))
+
+
+### Bug Fixes
+
+* **libclang:** Update bindings ([#15](https://github.com/RainwayApp/node-clangffi/issues/15)) ([c1067f8](https://github.com/RainwayApp/node-clangffi/commit/c1067f84f232a3cae0e6357ec1469009a0d7fb4d))
+
+
+### Dependencies
+
+
+
 ## [1.0.0](https://github.com/rainwayapp/node-clangffi/compare/libclang-bindings-v1.0.0...libclang-bindings-v1.0.0) (2022-01-05)
 
 
@@ -10,5 +27,3 @@
 
 
 ### Dependencies
-
-

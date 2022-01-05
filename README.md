@@ -1,5 +1,8 @@
 # node-clangffi
 
+[![CI](https://github.com/RainwayApp/node-clangffi/actions/workflows/ci.yml/badge.svg)](https://github.com/RainwayApp/node-clangffi/actions/workflows/ci.yml)
+[![CD](https://github.com/RainwayApp/node-clangffi/actions/workflows/cd.yml/badge.svg)](https://github.com/RainwayApp/node-clangffi/actions/workflows/cd.yml)
+
 Tools to generate Typescript FFI bindings for C/C++ libraries using [libclang](https://clang.llvm.org/doxygen/group__CINDEX.html) and [ffi-napi](https://github.com/node-ffi-napi/node-ffi-napi).
 
 ## Features
@@ -26,10 +29,10 @@ Contributions are welcome, but guidelines for how to get involved are not in pla
 
 ### Helpful commands
 
-- `npm run bootstrap` to bootstrap the project
-- `npx lerna add <dep> packages/<project> [--dev]` to add a dep (`--dev` makes it a dev dep)
-- `npm run build` builds all packages
-- `npm run clangffi` runs clangffi (remember to build first)
+- `npm run bootstrap` to bootstrap the project.
+- `npx lerna add <dep> packages/<project> [--dev]` to add a dep (`--dev` makes it a dev dep).
+- `npm run build` builds all packages.
+- `npm run clangffi` runs clangffi (remember to build first).
 - `npm run generate-dogfood` re-generates our libclang bindings using `libclang-bindings` (ourself).
 
 To get started:

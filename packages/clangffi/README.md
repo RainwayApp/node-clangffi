@@ -36,8 +36,10 @@ Options:
   -I, --include-directory  Additional include directories to use during parsing
                                                            [array] [default: []]
       --lib-path           The path to the libclang binary to load.     [string]
-      --allow              Additional file paths to allow symbols from
+      --allow-file         Additional file paths to allow symbols from
                                                            [array] [default: []]
+      --allow-symbol       Additional symbol name to allow regardless of it's
+                           location                        [array] [default: []]
       --crlf               Use crlf endings instead of lf
                                                       [boolean] [default: false]
       --no-sibling         Does not include sibling file symbols in the
@@ -49,7 +51,13 @@ Options:
 Generate typescript ffi-napi bindings for any c/c++ library using libclang.
 ```
 
-Note that by default, only symbols that are directly sourced from the `input` header or included files that are next to the input header on disk (e.g. "sibling" files) will be included in the bindings. To include other symbols, specify the `--allow` flag, passing other source files. E.g. `--input path/to/initial/header.h --allow path/to/included/header.h`.
+## Selecting symbols
+
+By default, only symbols that are directly sourced from the `input` header or included files that are next to the input header on disk (e.g. "sibling" files) will be included in the bindings.
+
+To include other symbols, specify the `--allow-file` flag, passing other source files. E.g. `--input path/to/initial/header.h --allow-file path/to/included/header.h`. It is also possible to allow specific symbols with the `--allow-symbol` flag, which includes symbols with a particular name regardless of their source location. E.g. `--input path/to/initial/header.h --allow-symbol YourSymbolName`.
+
+When both `--allow-file` and `--allow-symbol` are used, all symbols from the `--allow-file` files are included, as well as any symbols that are specified from `--allow-symbol`. Further - Just to clarify - if a symbol matches both `--allow-file` and `--allow-symbol` it's included (hopefully that's what you'd expect).
 
 ## Logging
 

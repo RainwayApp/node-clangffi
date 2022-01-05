@@ -1,4 +1,7 @@
 {
+  "bootstrap-sha":  "e74d425651050241d6460a7e35348ebd2f8932df",
+  "last-release-sha": "e74d425651050241d6460a7e35348ebd2f8932df",
+  "plugins": ["node-workspace"],
   "packages": {
     "packages/clangffi": {
       "releaseType": "node",

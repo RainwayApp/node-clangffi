@@ -11,7 +11,7 @@ import {
   TypedefDecl,
 } from "libclang-bindings";
 import { StringBuilder } from "../string-builder";
-import { ISourceGenerator, LineEndings } from "../types";
+import { FnParamCallbackSpec, ISourceGenerator, LineEndings } from "../types";
 import { RefResolver, resolveType, TSResolver } from "./resolve";
 import { resolveName } from "../util";
 
@@ -30,6 +30,12 @@ export interface TsGenOptions {
    * Flag indicating if we should format the source with prettier
    */
   usePrettier: boolean;
+
+  /**
+   * Function parameter callback specs for parameters
+   * that should be treated as `ffi.Callback` instad of `ffi.Function`.
+   */
+  fnParamCallbacks: FnParamCallbackSpec[];
 }
 
 /**
@@ -230,7 +236,19 @@ export class TsGen implements ISourceGenerator {
       // if we actually have params, overwrite the empty string
       if (typeClass.paramTypes && typeClass.paramTypes.length > 0) {
         params = typeClass.paramTypes
-          .map((p) => resolveType(p, this.refResolver))
+          .map((p, i) => {
+            let typ = resolveType(p, this.refResolver);
+
+            // check if we should remap this type to a callback
+            if (this.opts.fnParamCallbacks.some(c => {
+              return c.fnName == name && i == c.paramIndex
+            })) {
+              log(`Resolving ${name}:${i} as ffi.Callback`);
+              typ = typ.replace("ffi.Function", "ffi.Callback");
+            }
+
+            return typ;
+          })
           .join(",");
       }
 

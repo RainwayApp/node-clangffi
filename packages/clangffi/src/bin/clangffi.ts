@@ -5,7 +5,7 @@ import path from "path";
 import { Language, loadLibClang } from "libclang-bindings";
 import { Parser } from "../lib";
 import { TsGen } from "../lib/tsgen/index";
-import { LineEndings } from "../lib/types";
+import { FnParamCallbackSpec, LineEndings } from "../lib/types";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import debug from "debug";
@@ -37,6 +37,8 @@ const args = yargs(hideBin(process.argv))
   .array("allow-file")
   .string("allow-symbol")
   .array("allow-symbol")
+  .string("fn-param-cb")
+  .array("fn-param-cb")
   .default({
     crlf: false,
     "no-prettier": false,
@@ -45,6 +47,7 @@ const args = yargs(hideBin(process.argv))
     I: [],
     "allow-file": [],
     "allow-symbol": [],
+    "fn-param-cb": [],
   })
   .demandOption("input")
   .demandOption("output")
@@ -61,6 +64,8 @@ const args = yargs(hideBin(process.argv))
     "no-sibling":
       "Does not include sibling file symbols in the generated bindings",
     "no-prettier": "Does not run prettier on the generated binding output",
+    "fn-param-cb":
+      "Specifies parameter symbols to treat as callback function pointers. Uses the format 'fnName:paramIndex' - e.g. 'MyFunc:0'.",
   })
   .help().argv;
 
@@ -72,6 +77,7 @@ if (!(args instanceof Promise)) {
   const lang: Language = args.language == "c" ? Language.C : Language.Cpp;
   const includeDirectories: string[] = args.includeDirectory ?? [];
   const additionalSymbols: string[] = args.allowSymbol ?? [];
+  const fnParamArgs: string[] = args.fnParamCb ?? [];
 
   const includeFiles = includeDirectories.flatMap((includeDir) =>
     fs
@@ -91,6 +97,10 @@ if (!(args instanceof Promise)) {
     .concat(includeFiles)
     .concat(args.allowFile ?? []);
 
+  const fnParamCallbacks: FnParamCallbackSpec[] = fnParamArgs
+    .map((f) => f.split(":"))
+    .map((arr) => ({ fnName: arr[0], paramIndex: Number(arr[1]) }));
+
   const defaultLibPath =
     process.platform == "win32" ? "libclang.dll" : "libclang";
 
@@ -108,6 +118,7 @@ if (!(args instanceof Promise)) {
     generator: new TsGen({
       lineEndings: args.crlf ? LineEndings.CRLF : LineEndings.LF,
       usePrettier: args["no-prettier"] ? false : true,
+      fnParamCallbacks,
     }),
   }).parseAndGenerate();
 } else {

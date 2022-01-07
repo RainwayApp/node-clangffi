@@ -112,3 +112,18 @@ export interface ITypeNameResolver {
   createFunction(str: string): string;
   createUnknown(str: string): string;
 }
+
+/**
+ * The spec for a func param that will be treated as a `ffi.Callback`
+ */
+export interface FnParamCallbackSpec {
+  /**
+   * Function symbol name
+   */
+  fnName: string
+
+  /**
+   * Parameter index
+   */
+  paramIndex: number
+}

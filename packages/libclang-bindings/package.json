@@ -45,6 +45,6 @@
     "ref-struct-di": "^1.1.1"
   },
   "engines": {
-    "node": "^17.x"
+    "node": ">=17.x"
   }
 }

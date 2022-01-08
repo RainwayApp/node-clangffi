@@ -39,6 +39,7 @@ describe("libclang", () => {
       ),
       language: Language.C,
       includeDirectories: [includeDir],
+      preprocessorDefinitions: [],
     });
 
     const decls: SerializedDecl[] = [];

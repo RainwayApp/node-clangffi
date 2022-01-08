@@ -1,17 +1,22 @@
 #!/usr/bin/env node
 
-import fs from "fs";
-import path from "path";
+import { fileURLToPath } from "node:url";
+import fs from "node:fs";
+import path from "node:path";
 import { Language, loadLibClang } from "libclang-bindings";
-import { Parser } from "../lib";
-import { TsGen } from "../lib/tsgen/index";
-import { FnParamCallbackSpec, LineEndings } from "../lib/types";
+import { Parser } from "../lib/index.js";
+import { TsGen } from "../lib/tsgen/index.js";
+import { LineEndings } from "../lib/types.js";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import debug from "debug";
+import { parse } from "../lib/selector.js";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const log = debug("clangffi");
-const pkg = require(path.join(__dirname, "../../package.json"));
+const pkg = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "../../package.json")).toString()
+);
 
 const args = yargs(hideBin(process.argv))
   .version(pkg.version)
@@ -19,87 +24,218 @@ const args = yargs(hideBin(process.argv))
   .epilog(
     "Generate typescript ffi-napi bindings for any c/c++ library using libclang."
   )
-  .boolean("crlf")
-  .boolean("no-sibling")
-  .boolean("no-prettier")
-  .string("lib-path")
-  .string("i")
-  .alias("i", "input")
-  .string("o")
-  .alias("o", "output")
-  .string("L")
-  .alias("L", "language")
-  .choices("L", ["c", "cpp"])
-  .string("I")
-  .array("I")
-  .alias("I", "include-directory")
-  .string("allow-file")
-  .array("allow-file")
-  .string("allow-symbol")
-  .array("allow-symbol")
-  .string("fn-param-cb")
-  .array("fn-param-cb")
-  .default({
-    crlf: false,
-    "no-prettier": false,
-    "no-sibling": false,
-    L: "c",
-    I: [],
-    "allow-file": [],
-    "allow-symbol": [],
-    "fn-param-cb": [],
+  .options({
+    i: {
+      type: "string",
+      alias: "input",
+      describe: "Path to the header from which we will generate bindings.",
+      demandOption: true,
+    },
+    o: {
+      type: "string",
+      alias: "output",
+      describe:
+        "Path to the output typescript file into which we will write the generated bindings.",
+      demandOption: true,
+    },
+    L: {
+      type: "string",
+      alias: "language",
+      choices: ["c", "cpp"],
+      describe: "The language libclang should parse the input as.",
+      default: "c",
+      coerce: (arg) => {
+        return arg as Language;
+      },
+    },
+    I: {
+      type: "array",
+      string: true,
+      alias: "include-directory",
+      describe: "Additional include directories to use during parsing.",
+      default: [] as string[],
+    },
+    D: {
+      type: "array",
+      string: true,
+      alias: "define",
+      describe: "Preprocessor definitions to use during parsing.",
+      default: [] as string[],
+    },
+    R: {
+      type: "array",
+      string: true,
+      alias: "remap",
+      describe: "Custom native symbol mappings that override the default.",
+      default: [] as string[],
+    },
+    crlf: {
+      type: "boolean",
+      describe:
+        "Flag indicating if `crlf` line endings should be used instead of `lf`.",
+      default: false,
+    },
+    prettier: {
+      type: "boolean",
+      describe:
+        "Flag indicating if `prettier` will be run against the bindings before output.",
+      default: true,
+    },
+    "lib-path": {
+      type: "string",
+      describe:
+        "Specifies an absolute path to `libclang` which will be used instead of searching `PATH`.",
+    },
+    "default-symbols": {
+      type: "boolean",
+      describe:
+        "Flag indicating if symbols in the `input` file will be automatically included in the bindings.",
+      default: true,
+    },
+    include: {
+      type: "array",
+      string: true,
+      describe: "Symbols to explicitly include in the bindings.",
+      default: [] as string[],
+    },
+    "include-file": {
+      type: "array",
+      string: true,
+      describe:
+        "File paths to explicitly include symbols from, in addition to the default. If a directory path is given symbols from all files in that directory will be included.",
+      default: [] as string[],
+    },
+    exclude: {
+      type: "array",
+      string: true,
+      describe:
+        "Symbols to explicitly exclude from the bindings. Overrides `include` if there is a conflict.",
+      default: [] as string[],
+    },
+    "hard-remap": {
+      type: "array",
+      string: true,
+      alias: "remap",
+      describe:
+        "Custom native to node symbol mappings that override the default.",
+      default: [] as string[],
+    },
   })
-  .demandOption("input")
-  .demandOption("output")
-  .describe({
-    i: "Input header path",
-    o: "Output typescript file path",
-    L: "Language to parse input as",
-    I: "Additional include directories to use during parsing",
-    "lib-path": "The path to the libclang binary to load.",
-    "allow-file": "Additional file paths to allow symbols from",
-    "allow-symbol":
-      "Additional symbol name to allow regardless of it's location",
-    crlf: "Use crlf endings instead of lf",
-    "no-sibling":
-      "Does not include sibling file symbols in the generated bindings",
-    "no-prettier": "Does not run prettier on the generated binding output",
-    "fn-param-cb":
-      "Specifies parameter symbols to treat as callback function pointers. Uses the format 'fnName:paramIndex' - e.g. 'MyFunc:0'.",
+  .example([
+    [
+      "$0 --input path/to/header.h --output path/to/output.ts",
+      "Generate bindings with `libclang` in `PATH`",
+    ],
+    [
+      "$0 --lib-path path/to/libclang --input path/to/header.h --output path/to/output.ts",
+      "Generate bindings with a custom `libclang` path",
+    ],
+    [
+      "$0 --input path/to/header.h --output path/to/output.ts --include *Cb",
+      "Generate bindings, including all symbols with names ending in `Cb`",
+    ],
+    [
+      "$0 --input path/to/header.h --output path/to/output.ts --remap 'time_t=long long'",
+      "Generate bindings, remapping symbol `time_t` to native type `long long`.",
+    ],
+    [
+      "$0 --input path/to/header.h --output path/to/output.ts --hard-remap 'time_t=ref.types.longlong'",
+      "Generate bindings, hard remapping symbol `time_t` to node type `ref.types.longlong`.",
+    ],
+  ])
+  .check((argv) => {
+    // ensure input is good
+    if (!fs.existsSync(argv.i)) {
+      throw new Error(`Unable to find input file: '${argv.i}'.`);
+    }
+
+    // check the include dirs exist
+    argv.I.forEach((includeDir) => {
+      if (!fs.existsSync(includeDir)) {
+        throw new Error(`Cannot find include-directory '${includeDir}'.`);
+      }
+    });
+
+    // check the include-files exist
+    argv["include-file"].forEach((file) => {
+      if (!fs.existsSync(file)) {
+        throw new Error(`Cannot find include-file '${file}'.`);
+      }
+    });
+
+    // ensure the remap values are good
+    argv.R.forEach((remap) => {
+      const [key, val, ...remainder] = remap.split("=");
+      if (
+        !key ||
+        key.length == 0 ||
+        !val ||
+        val.length == 0 ||
+        remainder.length > 0
+      ) {
+        throw new Error(
+          `Cannot parse remap '${remap}'. Should use the format 'key=value'. E.g. "time_t='long long'".`
+        );
+      }
+
+      try {
+        parse(key);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : JSON.stringify(e);
+        throw new Error(`Cannot parse key from remap '${remap}': ${msg}`);
+      }
+    });
+
+    // ensure the hard-remap values are good
+    argv["hard-remap"].forEach((remap) => {
+      const [key, val, ...remainder] = remap.split("=");
+      if (
+        !key ||
+        key.length == 0 ||
+        !val ||
+        val.length == 0 ||
+        remainder.length > 0
+      ) {
+        throw new Error(
+          `Cannot parse hard-remap '${remap}'. Should use the format 'key=value'. E.g. "time_t=ref.types.longlong".`
+        );
+      }
+
+      try {
+        parse(key);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : JSON.stringify(e);
+        throw new Error(`Cannot parse key from hard-remap '${remap}': ${msg}`);
+      }
+    });
+
+    // ensure the include values can be parsed
+    argv.include.forEach((include) => {
+      try {
+        parse(include);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : JSON.stringify(e);
+        throw new Error(`Cannot parse value from include '${include}'. ${msg}`);
+      }
+    });
+
+    // ensure the exclude values can be parsed
+    argv.exclude.forEach((exclude) => {
+      try {
+        parse(exclude);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : JSON.stringify(e);
+        throw new Error(`Cannot parse value from exclude '${exclude}': ${msg}`);
+      }
+    });
+
+    // if we get here, no issues were detected
+    return true;
   })
   .help().argv;
 
 if (!(args instanceof Promise)) {
   log(JSON.stringify(args, null, 2));
-
-  // process the arguments
-  const fileDir = path.dirname(args.input);
-  const lang: Language = args.language == "c" ? Language.C : Language.Cpp;
-  const includeDirectories: string[] = args.includeDirectory ?? [];
-  const additionalSymbols: string[] = args.allowSymbol ?? [];
-  const fnParamArgs: string[] = args.fnParamCb ?? [];
-
-  const includeFiles = includeDirectories.flatMap((includeDir) =>
-    fs
-      .readdirSync(includeDir)
-      .map((f) => path.join(includeDir, f))
-      .filter((f) => path.extname(f) == ".h")
-  );
-
-  const siblingFiles: string[] = args.noSibling
-    ? []
-    : fs
-        .readdirSync(fileDir)
-        .map((f) => path.join(fileDir, f))
-        .filter((f) => path.extname(f) == ".h");
-
-  const additionalFiles = siblingFiles
-    .concat(includeFiles)
-    .concat(args.allowFile ?? []);
-
-  const fnParamCallbacks: FnParamCallbackSpec[] = fnParamArgs
-    .map((f) => f.split(":"))
-    .map((arr) => ({ fnName: arr[0], paramIndex: Number(arr[1]) }));
 
   const defaultLibPath =
     process.platform == "win32" ? "libclang.dll" : "libclang";
@@ -109,16 +245,30 @@ if (!(args instanceof Promise)) {
 
   // create a parser and run it
   new Parser({
-    path: args.input,
-    outputPath: args.output,
-    language: lang,
-    additionalFiles,
-    includeDirectories,
-    additionalSymbols,
+    path: args.i,
+    outputPath: args.o,
+    language: args.L,
+    includeDirectories: args.I,
+    preprocessorDefinitions: args.D,
+    symbols: {
+      default: args.defaultSymbols,
+      files: args.includeFile,
+      include: args.include.map((sel) => parse(sel)),
+      exclude: args.exclude.map((sel) => parse(sel)),
+    },
     generator: new TsGen({
       lineEndings: args.crlf ? LineEndings.CRLF : LineEndings.LF,
-      usePrettier: args["no-prettier"] ? false : true,
-      fnParamCallbacks,
+      usePrettier: args.prettier,
+      symbols: {
+        remap: args.R.map((kv) => {
+          const [key, val] = kv.split("=");
+          return { selector: parse(key), replacement: val };
+        }),
+        hardRemap: args.hardRemap.map((kv) => {
+          const [key, val] = kv.split("=");
+          return { selector: parse(key), replacement: val };
+        }),
+      },
     }),
   }).parseAndGenerate();
 } else {

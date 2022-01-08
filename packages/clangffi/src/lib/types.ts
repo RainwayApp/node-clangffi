@@ -7,6 +7,7 @@ import {
   FunctionDecl,
   ParamDecl,
 } from "libclang-bindings";
+import { SelectorData } from "./selector.js";
 
 export interface ISourceGenerator {
   open(outputPath: string): void;
@@ -114,16 +115,16 @@ export interface ITypeNameResolver {
 }
 
 /**
- * The spec for a func param that will be treated as a `ffi.Callback`
+ * The spec for a symbol replacement
  */
-export interface FnParamCallbackSpec {
+export interface SymbolReplacementSpec {
   /**
-   * Function symbol name
+   * The symbol selector
    */
-  fnName: string
+  selector: SelectorData;
 
   /**
-   * Parameter index
+   * The replacement type
    */
-  paramIndex: number
+  replacement: string;
 }

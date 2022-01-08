@@ -1,19 +1,27 @@
-import { writeFileSync } from "fs";
-import { format } from "prettier";
+import { writeFileSync } from "node:fs";
+import prettier from "prettier";
 import debug from "debug";
 import {
+  DesugaredType,
   EnumConstantDecl,
   EnumDecl,
   FieldDecl,
   FunctionDecl,
   ParamDecl,
   StructDecl,
+  Type,
   TypedefDecl,
 } from "libclang-bindings";
-import { StringBuilder } from "../string-builder";
-import { FnParamCallbackSpec, ISourceGenerator, LineEndings } from "../types";
-import { RefResolver, resolveType, TSResolver } from "./resolve";
-import { resolveName } from "../util";
+import { StringBuilder } from "../string-builder.js";
+import {
+  ISourceGenerator,
+  ITypeNameResolver,
+  LineEndings,
+  SymbolReplacementSpec,
+} from "../types.js";
+import { RefResolver, resolveType, TSResolver } from "./resolve.js";
+import { resolveName } from "../util.js";
+import { matches } from "../selector.js";
 
 const log = debug("clangffi:tsgen");
 
@@ -32,10 +40,19 @@ export interface TsGenOptions {
   usePrettier: boolean;
 
   /**
-   * Function parameter callback specs for parameters
-   * that should be treated as `ffi.Callback` instad of `ffi.Function`.
+   * Symbol options
    */
-  fnParamCallbacks: FnParamCallbackSpec[];
+  symbols: {
+    /**
+     * Symbol remaps from name => native type
+     */
+    remap: SymbolReplacementSpec[];
+
+    /**
+     * Symbol remaps from name => literal node type
+     */
+    hardRemap: SymbolReplacementSpec[];
+  };
 }
 
 /**
@@ -104,7 +121,7 @@ export class TsGen implements ISourceGenerator {
       this.fnBuilder.toString();
 
     if (this.opts.usePrettier) {
-      txt = format(txt, {
+      txt = prettier.format(txt, {
         parser: "typescript",
       });
     }
@@ -121,7 +138,7 @@ export class TsGen implements ISourceGenerator {
     log(`openEnum(${name}): begin`);
 
     const backingType = decl.backingType;
-    const refType = resolveType(backingType, this.refResolver);
+    const refType = this.resolveType(name, backingType, this.refResolver);
 
     this.typingsBuilder.appendLine(`export enum ${name} {`);
 
@@ -159,13 +176,18 @@ export class TsGen implements ISourceGenerator {
     log(`openTypedef(${name}): begin`);
 
     this.typingsBuilder.appendLine(
-      `export type ${name} = ${resolveType(
+      `export type ${name} = ${this.resolveType(
+        name,
         decl.underlyingTypeClass,
         this.tsResolver
       )};`
     );
 
-    const refType = resolveType(decl.underlyingTypeClass, this.refResolver);
+    const refType = this.resolveType(
+      name,
+      decl.underlyingTypeClass,
+      this.refResolver
+    );
     this.nativeBuilder.appendLine(`export const ${name}Def = ${refType};`);
 
     log(`openTypedef(${name}): end`);
@@ -193,10 +215,10 @@ export class TsGen implements ISourceGenerator {
     log(`openStructField(${name}): begin`);
 
     this.typingsBuilder.appendLine(
-      `${name}: ${resolveType(decl.typeClass, this.tsResolver)};`
+      `${name}: ${this.resolveType(name, decl.typeClass, this.tsResolver)};`
     );
     this.nativeBuilder.appendLine(
-      `${name}: ${resolveType(decl.typeClass, this.refResolver)},`
+      `${name}: ${this.resolveType(name, decl.typeClass, this.refResolver)},`
     );
 
     log(`openStructField(${name}): end`);
@@ -236,24 +258,13 @@ export class TsGen implements ISourceGenerator {
       // if we actually have params, overwrite the empty string
       if (typeClass.paramTypes && typeClass.paramTypes.length > 0) {
         params = typeClass.paramTypes
-          .map((p, i) => {
-            let typ = resolveType(p, this.refResolver);
-
-            // check if we should remap this type to a callback
-            if (this.opts.fnParamCallbacks.some(c => {
-              return c.fnName == name && i == c.paramIndex
-            })) {
-              log(`Resolving ${name}:${i} as ffi.Callback`);
-              typ = typ.replace("ffi.Function", "ffi.Callback");
-            }
-
-            return typ;
-          })
+          .map((p, i) => this.resolveType(`${name}:${i}`, p, this.refResolver))
           .join(",");
       }
 
       this.fnBuilder.appendLine(
-        `"${name}": [${resolveType(
+        `"${name}": [${this.resolveType(
+          name,
           typeClass.returnType,
           this.refResolver
         )}, [${params}]],`
@@ -273,5 +284,48 @@ export class TsGen implements ISourceGenerator {
 
   public closeFunction(decl: FunctionDecl) {
     // nothing to do
+  }
+
+  /**
+   * Resolves a type, optionally remapping along the way.
+   *
+   * @param symbolName symbol to resolve
+   * @param type type to resolve
+   * @param resolver resolver to use
+   * @returns resolved type string
+   */
+  private resolveType(
+    symbolName: string | undefined,
+    type: Type,
+    resolver: ITypeNameResolver
+  ): string {
+    const preMapper = this.opts.symbols.remap.find((spec) =>
+      matches(symbolName ?? "", spec.selector)
+    );
+
+    let preType = type;
+
+    if (preMapper) {
+      log(
+        `found remap selector for '${symbolName}'. Remapping to '${preMapper.replacement}'.`
+      );
+
+      preType = new DesugaredType(type.handle, preMapper.replacement);
+    }
+
+    let result = resolveType(preType, resolver);
+
+    const postMapper = this.opts.symbols.hardRemap.find((spec) =>
+      matches(symbolName ?? "", spec.selector)
+    );
+
+    if (postMapper) {
+      log(
+        `found hard-remap selector for '${symbolName}'. Hard remapping to '${postMapper.replacement}' from '${result}'.`
+      );
+      result = postMapper.replacement;
+    }
+
+    return result;
   }
 }

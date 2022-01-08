@@ -20,6 +20,7 @@ const pkg = JSON.parse(
 
 const args = yargs(hideBin(process.argv))
   .version(pkg.version)
+  .wrap(yargs([""]).terminalWidth())
   .scriptName("clangffi")
   .epilog(
     "Generate typescript ffi-napi bindings for any c/c++ library using libclang."
@@ -124,15 +125,15 @@ const args = yargs(hideBin(process.argv))
   .example([
     [
       "$0 --input path/to/header.h --output path/to/output.ts",
-      "Generate bindings with `libclang` in `PATH`",
+      "Generate bindings with `libclang` in `PATH`.",
     ],
     [
       "$0 --lib-path path/to/libclang --input path/to/header.h --output path/to/output.ts",
-      "Generate bindings with a custom `libclang` path",
+      "Generate bindings with a custom `libclang` path.",
     ],
     [
       "$0 --input path/to/header.h --output path/to/output.ts --include *Cb",
-      "Generate bindings, including all symbols with names ending in `Cb`",
+      "Generate bindings, including all symbols with names ending in `Cb`.",
     ],
     [
       "$0 --input path/to/header.h --output path/to/output.ts --remap 'time_t=long long'",

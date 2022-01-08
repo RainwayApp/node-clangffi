@@ -1,5 +1,5 @@
 import ffi from "ffi-napi";
-import ref, { Pointer as TypedPointer } from "ref-napi";
+import ref, { Pointer as TypedPointer, UnderlyingType } from "ref-napi";
 import refStructDi, { StructObject } from "ref-struct-di";
 import refArrayDi, { TypedArray } from "ref-array-di";
 
@@ -16,33 +16,37 @@ export enum CXErrorCode {
   CXError_InvalidArguments = 3,
   CXError_ASTReadError = 4,
 }
-export type CXStringType = StructObject<CXString>;
+export type CXStringType = UnderlyingType<typeof CXStringDef>;
 export interface CXString {
   data: TypedPointer<void>;
   private_flags: number;
 }
-export type CXStringSetType = StructObject<CXStringSet>;
+export type CXStringSetType = UnderlyingType<typeof CXStringSetDef>;
 export interface CXStringSet {
   Strings: TypedPointer<CXString>;
   Count: number;
 }
-export type CXVirtualFileOverlayImplType =
-  StructObject<CXVirtualFileOverlayImpl>;
+export type CXVirtualFileOverlayImplType = UnderlyingType<
+  typeof CXVirtualFileOverlayImplDef
+>;
 export interface CXVirtualFileOverlayImpl {}
 export type CXVirtualFileOverlay = TypedPointer<CXVirtualFileOverlayImpl>;
-export type CXModuleMapDescriptorImplType =
-  StructObject<CXModuleMapDescriptorImpl>;
+export type CXModuleMapDescriptorImplType = UnderlyingType<
+  typeof CXModuleMapDescriptorImplDef
+>;
 export interface CXModuleMapDescriptorImpl {}
 export type CXModuleMapDescriptor = TypedPointer<CXModuleMapDescriptorImpl>;
 export type CXIndex = TypedPointer<void>;
-export type CXTargetInfoImplType = StructObject<CXTargetInfoImpl>;
+export type CXTargetInfoImplType = UnderlyingType<typeof CXTargetInfoImplDef>;
 export interface CXTargetInfoImpl {}
 export type CXTargetInfo = TypedPointer<CXTargetInfoImpl>;
-export type CXTranslationUnitImplType = StructObject<CXTranslationUnitImpl>;
+export type CXTranslationUnitImplType = UnderlyingType<
+  typeof CXTranslationUnitImplDef
+>;
 export interface CXTranslationUnitImpl {}
 export type CXTranslationUnit = TypedPointer<CXTranslationUnitImpl>;
 export type CXClientData = TypedPointer<void>;
-export type CXUnsavedFileType = StructObject<CXUnsavedFile>;
+export type CXUnsavedFileType = UnderlyingType<typeof CXUnsavedFileDef>;
 export interface CXUnsavedFile {
   Filename: string;
   Contents: string;
@@ -54,7 +58,7 @@ export enum CXAvailabilityKind {
   CXAvailability_NotAvailable = 2,
   CXAvailability_NotAccessible = 3,
 }
-export type CXVersionType = StructObject<CXVersion>;
+export type CXVersionType = UnderlyingType<typeof CXVersionDef>;
 export interface CXVersion {
   Major: number;
   Minor: number;
@@ -79,22 +83,22 @@ export enum CXGlobalOptFlags {
   CXGlobalOpt_ThreadBackgroundPriorityForAll = 3,
 }
 export type CXFile = TypedPointer<void>;
-export type CXFileUniqueIDType = StructObject<CXFileUniqueID>;
+export type CXFileUniqueIDType = UnderlyingType<typeof CXFileUniqueIDDef>;
 export interface CXFileUniqueID {
   data: TypedArray<number, 3>;
 }
-export type CXSourceLocationType = StructObject<CXSourceLocation>;
+export type CXSourceLocationType = UnderlyingType<typeof CXSourceLocationDef>;
 export interface CXSourceLocation {
   ptr_data: TypedArray<TypedPointer<void>, 2>;
   int_data: number;
 }
-export type CXSourceRangeType = StructObject<CXSourceRange>;
+export type CXSourceRangeType = UnderlyingType<typeof CXSourceRangeDef>;
 export interface CXSourceRange {
   ptr_data: TypedArray<TypedPointer<void>, 2>;
   begin_int_data: number;
   end_int_data: number;
 }
-export type CXSourceRangeListType = StructObject<CXSourceRangeList>;
+export type CXSourceRangeListType = UnderlyingType<typeof CXSourceRangeListDef>;
 export interface CXSourceRangeList {
   count: number;
   ranges: TypedPointer<CXSourceRange>;
@@ -173,12 +177,14 @@ export enum CXTUResourceUsageKind {
   CXTUResourceUsage_First = 1,
   CXTUResourceUsage_Last = 14,
 }
-export type CXTUResourceUsageEntryType = StructObject<CXTUResourceUsageEntry>;
+export type CXTUResourceUsageEntryType = UnderlyingType<
+  typeof CXTUResourceUsageEntryDef
+>;
 export interface CXTUResourceUsageEntry {
   kind: CXTUResourceUsageKind;
   amount: number;
 }
-export type CXTUResourceUsageType = StructObject<CXTUResourceUsage>;
+export type CXTUResourceUsageType = UnderlyingType<typeof CXTUResourceUsageDef>;
 export interface CXTUResourceUsage {
   data: TypedPointer<void>;
   numEntries: number;
@@ -457,7 +463,7 @@ export enum CXCursorKind {
   CXCursor_LastExtraDecl = 603,
   CXCursor_OverloadCandidate = 700,
 }
-export type CXCursorType = StructObject<CXCursor>;
+export type CXCursorType = UnderlyingType<typeof CXCursorDef>;
 export interface CXCursor {
   kind: CXCursorKind;
   xdata: number;
@@ -476,7 +482,9 @@ export enum CXVisibilityKind {
   CXVisibility_Protected = 2,
   CXVisibility_Default = 3,
 }
-export type CXPlatformAvailabilityType = StructObject<CXPlatformAvailability>;
+export type CXPlatformAvailabilityType = UnderlyingType<
+  typeof CXPlatformAvailabilityDef
+>;
 export interface CXPlatformAvailability {
   Platform: CXString;
   Introduced: CXVersion;
@@ -496,7 +504,7 @@ export enum CXTLSKind {
   CXTLS_Dynamic = 1,
   CXTLS_Static = 2,
 }
-export type CXCursorSetImplType = StructObject<CXCursorSetImpl>;
+export type CXCursorSetImplType = UnderlyingType<typeof CXCursorSetImplDef>;
 export interface CXCursorSetImpl {}
 export type CXCursorSet = TypedPointer<CXCursorSetImpl>;
 export enum CXTypeKind {
@@ -644,7 +652,7 @@ export enum CXCallingConv {
   CXCallingConv_Invalid = 100,
   CXCallingConv_Unexposed = 200,
 }
-export type CXTypeType = StructObject<CXType>;
+export type CXTypeType = UnderlyingType<typeof CXTypeDef>;
 export interface CXType {
   kind: CXTypeKind;
   data: TypedArray<TypedPointer<void>, 2>;
@@ -775,13 +783,15 @@ export enum CXTokenKind {
   CXToken_Literal = 3,
   CXToken_Comment = 4,
 }
-export type CXTokenType = StructObject<CXToken>;
+export type CXTokenType = UnderlyingType<typeof CXTokenDef>;
 export interface CXToken {
   int_data: TypedArray<number, 4>;
   ptr_data: TypedPointer<void>;
 }
 export type CXCompletionString = TypedPointer<void>;
-export type CXCompletionResultType = StructObject<CXCompletionResult>;
+export type CXCompletionResultType = UnderlyingType<
+  typeof CXCompletionResultDef
+>;
 export interface CXCompletionResult {
   CursorKind: CXCursorKind;
   CompletionString: CXCompletionString;
@@ -809,7 +819,9 @@ export enum CXCompletionChunkKind {
   CXCompletionChunk_HorizontalSpace = 19,
   CXCompletionChunk_VerticalSpace = 20,
 }
-export type CXCodeCompleteResultsType = StructObject<CXCodeCompleteResults>;
+export type CXCodeCompleteResultsType = UnderlyingType<
+  typeof CXCodeCompleteResultsDef
+>;
 export interface CXCodeCompleteResults {
   Results: TypedPointer<CXCompletionResult>;
   NumResults: number;
@@ -869,7 +881,9 @@ export enum CXVisitorResult {
   CXVisit_Break = 0,
   CXVisit_Continue = 1,
 }
-export type CXCursorAndRangeVisitorType = StructObject<CXCursorAndRangeVisitor>;
+export type CXCursorAndRangeVisitorType = UnderlyingType<
+  typeof CXCursorAndRangeVisitorDef
+>;
 export interface CXCursorAndRangeVisitor {
   context: TypedPointer<void>;
   visit: (
@@ -887,12 +901,14 @@ export type CXIdxClientFile = TypedPointer<void>;
 export type CXIdxClientEntity = TypedPointer<void>;
 export type CXIdxClientContainer = TypedPointer<void>;
 export type CXIdxClientASTFile = TypedPointer<void>;
-export type CXIdxLocType = StructObject<CXIdxLoc>;
+export type CXIdxLocType = UnderlyingType<typeof CXIdxLocDef>;
 export interface CXIdxLoc {
   ptr_data: TypedArray<TypedPointer<void>, 2>;
   int_data: number;
 }
-export type CXIdxIncludedFileInfoType = StructObject<CXIdxIncludedFileInfo>;
+export type CXIdxIncludedFileInfoType = UnderlyingType<
+  typeof CXIdxIncludedFileInfoDef
+>;
 export interface CXIdxIncludedFileInfo {
   hashLoc: CXIdxLoc;
   filename: string;
@@ -901,8 +917,9 @@ export interface CXIdxIncludedFileInfo {
   isAngled: number;
   isModuleImport: number;
 }
-export type CXIdxImportedASTFileInfoType =
-  StructObject<CXIdxImportedASTFileInfo>;
+export type CXIdxImportedASTFileInfoType = UnderlyingType<
+  typeof CXIdxImportedASTFileInfoDef
+>;
 export interface CXIdxImportedASTFileInfo {
   file: CXFile;
   module: CXModule;
@@ -957,13 +974,13 @@ export enum CXIdxAttrKind {
   CXIdxAttr_IBOutlet = 2,
   CXIdxAttr_IBOutletCollection = 3,
 }
-export type CXIdxAttrInfoType = StructObject<CXIdxAttrInfo>;
+export type CXIdxAttrInfoType = UnderlyingType<typeof CXIdxAttrInfoDef>;
 export interface CXIdxAttrInfo {
   kind: CXIdxAttrKind;
   cursor: CXCursor;
   loc: CXIdxLoc;
 }
-export type CXIdxEntityInfoType = StructObject<CXIdxEntityInfo>;
+export type CXIdxEntityInfoType = UnderlyingType<typeof CXIdxEntityInfoDef>;
 export interface CXIdxEntityInfo {
   kind: CXIdxEntityKind;
   templateKind: CXIdxEntityCXXTemplateKind;
@@ -974,12 +991,15 @@ export interface CXIdxEntityInfo {
   attributes: TypedPointer<TypedPointer<CXIdxAttrInfo>>;
   numAttributes: number;
 }
-export type CXIdxContainerInfoType = StructObject<CXIdxContainerInfo>;
+export type CXIdxContainerInfoType = UnderlyingType<
+  typeof CXIdxContainerInfoDef
+>;
 export interface CXIdxContainerInfo {
   cursor: CXCursor;
 }
-export type CXIdxIBOutletCollectionAttrInfoType =
-  StructObject<CXIdxIBOutletCollectionAttrInfo>;
+export type CXIdxIBOutletCollectionAttrInfoType = UnderlyingType<
+  typeof CXIdxIBOutletCollectionAttrInfoDef
+>;
 export interface CXIdxIBOutletCollectionAttrInfo {
   attrInfo: TypedPointer<CXIdxAttrInfo>;
   objcClass: TypedPointer<CXIdxEntityInfo>;
@@ -989,7 +1009,7 @@ export interface CXIdxIBOutletCollectionAttrInfo {
 export enum CXIdxDeclInfoFlags {
   CXIdxDeclFlag_Skipped = 1,
 }
-export type CXIdxDeclInfoType = StructObject<CXIdxDeclInfo>;
+export type CXIdxDeclInfoType = UnderlyingType<typeof CXIdxDeclInfoDef>;
 export interface CXIdxDeclInfo {
   entityInfo: TypedPointer<CXIdxEntityInfo>;
   cursor: CXCursor;
@@ -1010,40 +1030,47 @@ export enum CXIdxObjCContainerKind {
   CXIdxObjCContainer_Interface = 1,
   CXIdxObjCContainer_Implementation = 2,
 }
-export type CXIdxObjCContainerDeclInfoType =
-  StructObject<CXIdxObjCContainerDeclInfo>;
+export type CXIdxObjCContainerDeclInfoType = UnderlyingType<
+  typeof CXIdxObjCContainerDeclInfoDef
+>;
 export interface CXIdxObjCContainerDeclInfo {
   declInfo: TypedPointer<CXIdxDeclInfo>;
   kind: CXIdxObjCContainerKind;
 }
-export type CXIdxBaseClassInfoType = StructObject<CXIdxBaseClassInfo>;
+export type CXIdxBaseClassInfoType = UnderlyingType<
+  typeof CXIdxBaseClassInfoDef
+>;
 export interface CXIdxBaseClassInfo {
   base: TypedPointer<CXIdxEntityInfo>;
   cursor: CXCursor;
   loc: CXIdxLoc;
 }
-export type CXIdxObjCProtocolRefInfoType =
-  StructObject<CXIdxObjCProtocolRefInfo>;
+export type CXIdxObjCProtocolRefInfoType = UnderlyingType<
+  typeof CXIdxObjCProtocolRefInfoDef
+>;
 export interface CXIdxObjCProtocolRefInfo {
   protocol: TypedPointer<CXIdxEntityInfo>;
   cursor: CXCursor;
   loc: CXIdxLoc;
 }
-export type CXIdxObjCProtocolRefListInfoType =
-  StructObject<CXIdxObjCProtocolRefListInfo>;
+export type CXIdxObjCProtocolRefListInfoType = UnderlyingType<
+  typeof CXIdxObjCProtocolRefListInfoDef
+>;
 export interface CXIdxObjCProtocolRefListInfo {
   protocols: TypedPointer<TypedPointer<CXIdxObjCProtocolRefInfo>>;
   numProtocols: number;
 }
-export type CXIdxObjCInterfaceDeclInfoType =
-  StructObject<CXIdxObjCInterfaceDeclInfo>;
+export type CXIdxObjCInterfaceDeclInfoType = UnderlyingType<
+  typeof CXIdxObjCInterfaceDeclInfoDef
+>;
 export interface CXIdxObjCInterfaceDeclInfo {
   containerInfo: TypedPointer<CXIdxObjCContainerDeclInfo>;
   superInfo: TypedPointer<CXIdxBaseClassInfo>;
   protocols: TypedPointer<CXIdxObjCProtocolRefListInfo>;
 }
-export type CXIdxObjCCategoryDeclInfoType =
-  StructObject<CXIdxObjCCategoryDeclInfo>;
+export type CXIdxObjCCategoryDeclInfoType = UnderlyingType<
+  typeof CXIdxObjCCategoryDeclInfoDef
+>;
 export interface CXIdxObjCCategoryDeclInfo {
   containerInfo: TypedPointer<CXIdxObjCContainerDeclInfo>;
   objcClass: TypedPointer<CXIdxEntityInfo>;
@@ -1051,14 +1078,17 @@ export interface CXIdxObjCCategoryDeclInfo {
   classLoc: CXIdxLoc;
   protocols: TypedPointer<CXIdxObjCProtocolRefListInfo>;
 }
-export type CXIdxObjCPropertyDeclInfoType =
-  StructObject<CXIdxObjCPropertyDeclInfo>;
+export type CXIdxObjCPropertyDeclInfoType = UnderlyingType<
+  typeof CXIdxObjCPropertyDeclInfoDef
+>;
 export interface CXIdxObjCPropertyDeclInfo {
   declInfo: TypedPointer<CXIdxDeclInfo>;
   getter: TypedPointer<CXIdxEntityInfo>;
   setter: TypedPointer<CXIdxEntityInfo>;
 }
-export type CXIdxCXXClassDeclInfoType = StructObject<CXIdxCXXClassDeclInfo>;
+export type CXIdxCXXClassDeclInfoType = UnderlyingType<
+  typeof CXIdxCXXClassDeclInfoDef
+>;
 export interface CXIdxCXXClassDeclInfo {
   declInfo: TypedPointer<CXIdxDeclInfo>;
   bases: TypedPointer<TypedPointer<CXIdxBaseClassInfo>>;
@@ -1080,7 +1110,9 @@ export enum CXSymbolRole {
   CXSymbolRole_AddressOf = 128,
   CXSymbolRole_Implicit = 256,
 }
-export type CXIdxEntityRefInfoType = StructObject<CXIdxEntityRefInfo>;
+export type CXIdxEntityRefInfoType = UnderlyingType<
+  typeof CXIdxEntityRefInfoDef
+>;
 export interface CXIdxEntityRefInfo {
   kind: CXIdxEntityRefKind;
   cursor: CXCursor;
@@ -1090,7 +1122,7 @@ export interface CXIdxEntityRefInfo {
   container: TypedPointer<CXIdxContainerInfo>;
   role: CXSymbolRole;
 }
-export type IndexerCallbacksType = StructObject<IndexerCallbacks>;
+export type IndexerCallbacksType = UnderlyingType<typeof IndexerCallbacksDef>;
 export interface IndexerCallbacks {
   abortQuery: (arg0: CXClientData, arg1: TypedPointer<void>) => number;
   diagnostic: (

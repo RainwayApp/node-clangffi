@@ -55,7 +55,7 @@ export class TsGen implements ISourceGenerator {
 
     this.typingsBuilder.appendLine(`import ffi from "ffi-napi";`);
     this.typingsBuilder.appendLine(
-      `import ref, {Pointer as TypedPointer} from "ref-napi";`
+      `import ref, {Pointer as TypedPointer, UnderlyingType} from "ref-napi";`
     );
     this.typingsBuilder.appendLine(
       `import refStructDi, {StructObject} from "ref-struct-di";`
@@ -174,7 +174,7 @@ export class TsGen implements ISourceGenerator {
     log(`openStruct(${name}): begin`);
 
     this.typingsBuilder.appendLine(
-      `export type ${name}Type = StructObject<${name}>;`
+      `export type ${name}Type = UnderlyingType<typeof ${name}Def>;`
     );
     this.typingsBuilder.appendLine(`export interface ${name} {`);
     this.nativeBuilder.appendLine(`export const ${name}Def = Struct({`);

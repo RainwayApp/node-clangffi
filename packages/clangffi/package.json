@@ -2,7 +2,8 @@
   "name": "clangffi",
   "version": "2.0.0",
   "description": "Generate Typescript FFI bindings for C/C++ libraries using libclang and ffi-napi",
-  "main": "dist/lib/index.js",
+  "type": "module",
+  "exports": "./dist/lib/index.js",
   "bin": {
     "clangffi": "dist/bin/clangffi.js"
   },
@@ -12,6 +13,9 @@
     "test": "jest"
   },
   "jest": {
+    "transformIgnorePatterns": [
+      "<rootDir>/node_modules/(?!matcher)"
+    ],
     "testPathIgnorePatterns": [
       "/node_modules/",
       "<rootDir>/dist/"
@@ -37,15 +41,16 @@
     "@types/yargs": "^17.0.8",
     "babel-jest": "^27.4.5",
     "jest": "^27.4.5",
+    "matcher": "^5.0.0",
     "typescript": "^4.5.4"
   },
   "dependencies": {
-    "libclang-bindings": "^1.1.0",
     "debug": "^4.3.3",
+    "libclang-bindings": "^1.1.0",
     "prettier": "^2.5.1",
     "yargs": "^17.3.1"
   },
   "engines": {
-    "node": "^17.x"
+    "node": ">=17.x"
   }
 }

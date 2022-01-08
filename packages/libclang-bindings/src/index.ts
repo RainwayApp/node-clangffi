@@ -105,6 +105,11 @@ export interface ParseOptions {
    * Additional directories to include
    */
   includeDirectories: string[];
+
+  /**
+   * Preprocessor definitions to define
+   */
+  preprocessorDefinitions: string[];
 }
 
 /**
@@ -143,6 +148,10 @@ export function parse(opts: ParseOptions): TranslationUnit {
 
   opts.includeDirectories.forEach((dir) => {
     args.push(`-I${dir}`);
+  });
+
+  opts.preprocessorDefinitions.forEach((def) => {
+    args.push(`-D ${def}`);
   });
 
   const nativeArgs = new StringArray(args.length);

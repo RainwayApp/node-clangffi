@@ -7,6 +7,7 @@ import {
   FunctionDecl,
   ParamDecl,
 } from "libclang-bindings";
+import { SelectorData } from "./selector.js";
 
 export interface ISourceGenerator {
   open(outputPath: string): void;
@@ -111,4 +112,19 @@ export interface ITypeNameResolver {
   createStruct(str: string): string;
   createFunction(str: string): string;
   createUnknown(str: string): string;
+}
+
+/**
+ * The spec for a symbol replacement
+ */
+export interface SymbolReplacementSpec {
+  /**
+   * The symbol selector
+   */
+  selector: SelectorData;
+
+  /**
+   * The replacement type
+   */
+  replacement: string;
 }

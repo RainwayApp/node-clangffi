@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import debug from "debug";
 import {
   createIndex,
   Cursor,
@@ -15,13 +17,11 @@ import {
   FieldDecl,
   ParamDecl,
   TypedefDecl,
-  CXCursorKind,
   CXTypeKind,
 } from "libclang-bindings";
-import { ISourceGenerator } from "./types";
-import debug from "debug";
-import { formatPath, resolveName } from "./util";
-import path from "path/posix";
+import { ISourceGenerator } from "./types.js";
+import { formatPath, resolveName } from "./util.js";
+import { matches, SelectorData } from "./selector.js";
 
 const log = debug("clangffi:parser");
 
@@ -35,20 +35,38 @@ export interface ParserOptions extends Omit<ParseOptions, "index"> {
   outputPath: string;
 
   /**
-   * If specified, additional files that will contribute to the the bindings
-   * If not specified, only symbols directly in the `path` file will be included
-   */
-  additionalFiles: string[];
-
-  /**
-   * Additional symbols to include (by name)
-   */
-  additionalSymbols: string[];
-
-  /**
    * The source generator to use
    */
   generator: ISourceGenerator;
+
+  /**
+   * Symbol config
+   */
+  symbols: {
+    /**
+     * Flag indicating if we should include 'default' symbols
+     *
+     * This means symbols that are defined in the source file we are parsing
+     */
+    default: boolean;
+
+    /**
+     * Files to explicitly include symbols from
+     */
+    files: string[];
+
+    /**
+     * Symbols to explicitly include
+     */
+    include: SelectorData[];
+
+    /**
+     * Symbols to explicitly exclude
+     *
+     * Overrides `include`.
+     */
+    exclude: SelectorData[];
+  };
 }
 
 /**
@@ -105,11 +123,35 @@ export class Parser {
       const symbolName = resolveName(decl);
 
       const isAllowedSymbol =
-        this.opts.additionalFiles.some((f) => formatPath(f) == sp) ||
-        this.opts.additionalSymbols.some((s) => s == symbolName);
+        // if we're accepting default symbols and it's a symbol from our input file
+        (this.opts.symbols.default && sp == formatPath(this.opts.path)) ||
+        // if it's from a file we're explicitly including
+        this.opts.symbols.files.some((filePath) => {
+          if (fs.lstatSync(filePath).isDirectory()) {
+            // if we include a directory and we're a file inside the directory
+            return sp.startsWith(formatPath(filePath));
+          } else {
+            // if we include a file and we are that file
+            return sp == formatPath(filePath);
+          }
+        }) ||
+        // if it's explicitly included
+        (symbolName &&
+          this.opts.symbols.include.some((sel) => matches(symbolName, sel)));
+
+      // however, if it's excluded explicitly that takes precedence
+      if (
+        isAllowedSymbol &&
+        symbolName &&
+        this.opts.symbols.exclude.length > 0 &&
+        this.opts.symbols.exclude.some((sel) => matches(symbolName, sel))
+      ) {
+        log(`skip '${symbolName}' from '${sp}' as it's explicitly excluded.`);
+        return CXChildVisitResult.CXChildVisit_Continue;
+      }
 
       // skip symbols that aren't in our purview
-      if (sp != this.opts.path && !isAllowedSymbol) {
+      if (!isAllowedSymbol) {
         log(`skip '${symbolName}' from '${sp}'.`);
         return CXChildVisitResult.CXChildVisit_Continue;
       }

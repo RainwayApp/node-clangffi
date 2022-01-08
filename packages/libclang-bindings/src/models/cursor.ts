@@ -2,7 +2,7 @@ import { lib } from "../lib";
 import { CXCursorKind } from "../libclang";
 import { CXCursor, INativeHandle } from "./types";
 import { readNativeString } from "../util";
-import { Type } from "..";
+import { Type } from "../index";
 
 export class Cursor implements INativeHandle<CXCursor> {
   constructor(private ptr: CXCursor) {}

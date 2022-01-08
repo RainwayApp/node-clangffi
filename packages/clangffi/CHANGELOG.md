@@ -1,5 +1,25 @@
 # Changelog
 
+## [3.0.0](https://github.com/RainwayApp/node-clangffi/compare/clangffi-v2.0.0...clangffi-v3.0.0) (2022-01-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* **selectors:** * feat(ffi-callback): support `ffi.Callback` params
+* **type-decl:** * feat(underlying-type): Use UnderlyingType
+
+### Features
+
+* **selectors:** Refactor to use selectors ([#33](https://github.com/RainwayApp/node-clangffi/issues/33)) ([0801a4a](https://github.com/RainwayApp/node-clangffi/commit/0801a4a500e55af49ab68697ab7e81bb93df86a0))
+* **type-decl:** Use UnderlyingType for `*Type` decls ([#31](https://github.com/RainwayApp/node-clangffi/issues/31)) ([0f5c539](https://github.com/RainwayApp/node-clangffi/commit/0f5c5398023d168c55628c813bbe76a78a1c52bf))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * libclang-bindings bumped from ^1.1.0 to ^2.0.0
+
 ## [2.0.0](https://github.com/RainwayApp/node-clangffi/compare/clangffi-v1.0.0...clangffi-v2.0.0) (2022-01-05)
 
 

@@ -20,21 +20,21 @@ jobs:
     steps:
       - uses: google-github-actions/release-please-action@v3
         id: release
-        if: ${{ github.event.inputs.run_release_place != 'true'}}
+        if: ${{ github.event.inputs.run_release_please == 'true'}}
         with:
           command: manifest
       # The logic below handles the npm publication:
       - name: Checkout Repository
-        if: ${{ steps.release.outputs.releases_created || github.event.inputs.run_release_place != 'true' }}
+        if: ${{ steps.release.outputs.releases_created || github.event.inputs.run_release_please != 'true' }}
         uses: actions/checkout@v2
       - name: Setup Node
         uses: actions/setup-node@v1
-        if: ${{ steps.release.outputs.releases_created || github.event.inputs.run_release_place != 'true' }}
+        if: ${{ steps.release.outputs.releases_created || github.event.inputs.run_release_please != 'true' }}
         with:
           node-version: 17
           registry-url: "https://registry.npmjs.org"
       - name: Build Packages
-        if: ${{ steps.release.outputs.releases_created || github.event.inputs.run_release_place != 'true' }}
+        if: ${{ steps.release.outputs.releases_created || github.event.inputs.run_release_please != 'true' }}
         run: |
           npm install
           npm run bootstrap
@@ -44,7 +44,7 @@ jobs:
       # need to publish all unpublished versions to NPM here
       # See: https://github.com/lerna/lerna/tree/main/commands/publish#bump-from-package
       - name: Publish to NPM
-        if: ${{ steps.release.outputs.releases_created || github.event.inputs.run_release_place != 'true' }}
+        if: ${{ steps.release.outputs.releases_created || github.event.inputs.run_release_please != 'true' }}
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
         run: npx lerna publish from-package --no-push --no-private --yes

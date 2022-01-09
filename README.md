@@ -16,7 +16,12 @@ Tools to generate Typescript FFI bindings for C/C++ libraries using [libclang](h
 See the following packages for more information:
 
 - [clangffi](./packages/clangffi) - cli tool for generating bindings
+
+![npm](https://img.shields.io/npm/v/clangffi)
+
 - [libclang-bindings](./packages/libclang-bindings) - libclang bindings for node
+
+![npm](https://img.shields.io/npm/v/libclang-bindings)
 
 ## Contributing
 

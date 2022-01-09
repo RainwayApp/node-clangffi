@@ -1,5 +1,7 @@
 # libclang-bindings
 
+![npm](https://img.shields.io/npm/v/libclang-bindings)
+
 Provides [libclang](https://clang.llvm.org/doxygen/group__CINDEX.html) bindings for node. Allows the caller to invoke `libclang` functions from within node using [ffi-napi](https://github.com/node-ffi-napi/node-ffi-napi). Note that this library does **NOT** include a `libclang` binary - you must install one yourself.
 
 ## How to use

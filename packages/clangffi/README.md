@@ -1,5 +1,7 @@
 # clangffi
 
+![npm](https://img.shields.io/npm/v/clangffi)
+
 Generate Typescript FFI bindings for C/C++ libraries using [libclang](https://clang.llvm.org/doxygen/group__CINDEX.html) and [ffi-napi](https://github.com/node-ffi-napi/node-ffi-napi).
 
 ## Features

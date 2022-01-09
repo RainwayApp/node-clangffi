@@ -4,7 +4,7 @@
     ".": {
       "release-as": "1.0.0",
       "releaseType": "node",
-      "draft": false,
+      "draft": true,
       "bumpMinorPreMajor": false,
       "bumpPatchForMinorPreMajor": false,
       "changelogPath": "CHANGELOG.md",

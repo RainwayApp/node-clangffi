@@ -12,7 +12,7 @@ on:
     inputs:
       run_release_please:
         description: "Should we run release-please?"
-        required: false
+        required: true
         default: "true"
 jobs:
   release-please:

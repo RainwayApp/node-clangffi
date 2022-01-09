@@ -1,5 +1,6 @@
 tsconfig.json
-babel.config.js
+babel.config.cjs
 *.test.ts
 *.test.js
 src/
+CHANGELOG.md

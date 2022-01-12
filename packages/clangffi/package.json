@@ -46,7 +46,7 @@
   "dependencies": {
     "matcher": "^5.0.0",
     "debug": "^4.3.3",
-    "libclang-bindings": "^2.0.0",
+    "libclang-bindings": "^3.0.0",
     "prettier": "^2.5.1",
     "yargs": "^17.3.1"
   },

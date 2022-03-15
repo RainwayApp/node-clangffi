@@ -137,8 +137,15 @@ export class TsGen implements ISourceGenerator {
     log("close(): end");
   }
 
+  // `openEnum` saves the enum name here for `openEnumConstant` to use.
+  currentEnumName: string = "";
+
   public openEnum(decl: EnumDecl) {
     const name = resolveName(decl);
+    if (name === undefined) {
+      throw new Error("enum name undefined");
+    }
+    this.currentEnumName = name;
 
     log(`openEnum(${name}): begin`);
 
@@ -155,20 +162,17 @@ export class TsGen implements ISourceGenerator {
 
   public openEnumConstant(decl: EnumConstantDecl) {
     let name = resolveName(decl);
+    if (name === undefined) {
+      throw new Error("enum constant name undefined");
+    }
     log(`openEnumConstant(${name}): begin`);
 
     const val = decl.isSigned ? decl.initVal : decl.unsignedInitVal;
-    if (name && this.opts.cleanEnumConstants) {
-      // TODO: does this work?  I can't test at all, because I get
-      //     Invalid CXChildVisitResult!
-      //     UNREACHABLE executed at C:\src\llvm_package_1400-rc2\llvm-project\clang\tools\libclang\CIndex.cpp:236!
-      // on every invocation of clangffi.
-      const typeName = decl.parent!.type.name;
-
+    if (this.opts.cleanEnumConstants) {
       // Convert to PascalCase, and strip the type name if it's present:
       name = snakeToPascalCase(name);
-      if (name.startsWith(typeName)) {
-        name = name.substring(typeName.length);
+      if (name.startsWith(this.currentEnumName)) {
+        name = name.substring(this.currentEnumName.length);
       }
     }
     this.typingsBuilder.appendLine(`${name} = ${val},`);

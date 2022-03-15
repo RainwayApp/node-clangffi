@@ -72,14 +72,12 @@ const args = yargs(hideBin(process.argv))
     },
     crlf: {
       type: "boolean",
-      describe:
-        "Flag indicating if `crlf` line endings should be used instead of `lf`.",
+      describe: "Use `crlf` line endings instead of `lf`.",
       default: false,
     },
     prettier: {
       type: "boolean",
-      describe:
-        "Flag indicating if `prettier` will be run against the bindings before output.",
+      describe: "Run `prettier` against the bindings before output.",
       default: true,
     },
     "lib-path": {
@@ -90,7 +88,7 @@ const args = yargs(hideBin(process.argv))
     "default-symbols": {
       type: "boolean",
       describe:
-        "Flag indicating if symbols in the `input` file will be automatically included in the bindings.",
+        "Automatically include symbols in the `input` file in the bindings.",
       default: true,
     },
     include: {
@@ -120,6 +118,12 @@ const args = yargs(hideBin(process.argv))
       describe:
         "Custom native to node symbol mappings that override the default.",
       default: [] as string[],
+    },
+    "clean-enum-constants": {
+      type: "boolean",
+      describe:
+        "Convert constant names like `ENUM_NAME_FOO_BAR` to `FooBar` in enums.",
+      default: true,
     },
   })
   .example([
@@ -270,6 +274,7 @@ if (!(args instanceof Promise)) {
           return { selector: parse(key), replacement: val };
         }),
       },
+      cleanEnumConstants: args.cleanEnumConstants,
     }),
   }).parseAndGenerate();
 } else {

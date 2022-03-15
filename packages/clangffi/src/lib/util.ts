@@ -59,3 +59,14 @@ export function resolveName(decl: Decl): string | undefined {
 export function formatPath(str: string): string {
   return str.replace(/\\/g, "/");
 }
+
+/**
+ * Transform a SNAKE_CASE string to a PascalCase string.
+ * @param str string to transform
+ */
+export function snakeToPascalCase(str: string): string {
+  return str.replace(
+    /([^_])([^_]*)(_|$)/gi,
+    (_, first, rest) => first + rest.toLowerCase()
+  );
+}

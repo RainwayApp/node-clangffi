@@ -20,7 +20,7 @@ import {
   SymbolReplacementSpec,
 } from "../types.js";
 import { RefResolver, resolveType, TSResolver } from "./resolve.js";
-import { resolveName } from "../util.js";
+import { resolveName, snakeToPascalCase } from "../util.js";
 import { matches } from "../selector.js";
 
 const log = debug("clangffi:tsgen");
@@ -38,6 +38,11 @@ export interface TsGenOptions {
    * Flag indicating if we should format the source with prettier
    */
   usePrettier: boolean;
+
+  /**
+   * Convert `ENUM_NAME_FOO_BAR` to `FooBar` in enums.
+   */
+  cleanEnumConstants: boolean;
 
   /**
    * Symbol options
@@ -132,8 +137,15 @@ export class TsGen implements ISourceGenerator {
     log("close(): end");
   }
 
+  // `openEnum` saves the enum name here for `openEnumConstant` to use.
+  currentEnumName: string = "";
+
   public openEnum(decl: EnumDecl) {
     const name = resolveName(decl);
+    if (name === undefined) {
+      throw new Error("enum name undefined");
+    }
+    this.currentEnumName = name;
 
     log(`openEnum(${name}): begin`);
 
@@ -149,10 +161,20 @@ export class TsGen implements ISourceGenerator {
   }
 
   public openEnumConstant(decl: EnumConstantDecl) {
-    const name = resolveName(decl);
+    let name = resolveName(decl);
+    if (name === undefined) {
+      throw new Error("enum constant name undefined");
+    }
     log(`openEnumConstant(${name}): begin`);
 
     const val = decl.isSigned ? decl.initVal : decl.unsignedInitVal;
+    if (this.opts.cleanEnumConstants) {
+      // Convert to PascalCase, and strip the type name if it's present:
+      name = snakeToPascalCase(name);
+      if (name.startsWith(this.currentEnumName)) {
+        name = name.substring(this.currentEnumName.length);
+      }
+    }
     this.typingsBuilder.appendLine(`${name} = ${val},`);
 
     log(`openEnumConstant(${name}): end`);

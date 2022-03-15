@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.0](https://github.com/RainwayApp/node-clangffi/compare/clangffi-v4.0.0...clangffi-v4.1.0) (2022-03-15)
+
+
+### Features
+
+* --clean-enum-constants flag ([b5dff91](https://github.com/RainwayApp/node-clangffi/commit/b5dff91784735bf9a3720ad7ccc2c4d218cd109c))
+
 ## [4.0.0](https://github.com/RainwayApp/node-clangffi/compare/clangffi-v3.0.0...clangffi-v4.0.0) (2022-01-12)
 
 

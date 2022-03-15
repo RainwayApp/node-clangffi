@@ -1,5 +1,5 @@
 {
-  "packages/clangffi": "4.0.0",
+  "packages/clangffi": "4.1.0",
   "packages/libclang-bindings": "3.0.0",
   ".": "1.0.0"
 }

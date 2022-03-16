@@ -1,6 +1,6 @@
 {
   "name": "clangffi",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "Generate Typescript FFI bindings for C/C++ libraries using libclang and ffi-napi",
   "type": "module",
   "exports": "./dist/lib/index.js",
@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "tsc -p .",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "npm run build", 
     "test": "jest"
   },
   "jest": {

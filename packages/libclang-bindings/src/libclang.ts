@@ -4,7 +4,7 @@ import refStructDi, { StructObject } from "ref-struct-di";
 import refArrayDi, { TypedArray } from "ref-array-di";
 
 const Struct = refStructDi(ref);
-const Array = refArrayDi(ref);
+const ArrayType = refArrayDi(ref);
 const Pointer = ref.refType;
 export type __time32_t = number;
 export type __time64_t = number;
@@ -1206,14 +1206,14 @@ export const CXCursor_ExceptionSpecificationKindDef = ref.types.int;
 export const CXGlobalOptFlagsDef = ref.types.int;
 export const CXFileDef = Pointer(ref.types.void);
 export const CXFileUniqueIDDef = Struct({
-  data: Array(ref.types.ulonglong, 3),
+  data: ArrayType(ref.types.ulonglong, 3),
 });
 export const CXSourceLocationDef = Struct({
-  ptr_data: Array(Pointer(ref.types.void), 2),
+  ptr_data: ArrayType(Pointer(ref.types.void), 2),
   int_data: ref.types.uint,
 });
 export const CXSourceRangeDef = Struct({
-  ptr_data: Array(Pointer(ref.types.void), 2),
+  ptr_data: ArrayType(Pointer(ref.types.void), 2),
   begin_int_data: ref.types.uint,
   end_int_data: ref.types.uint,
 });
@@ -1244,7 +1244,7 @@ export const CXCursorKindDef = ref.types.int;
 export const CXCursorDef = Struct({
   kind: CXCursorKindDef,
   xdata: ref.types.int,
-  data: Array(Pointer(ref.types.void), 3),
+  data: ArrayType(Pointer(ref.types.void), 3),
 });
 export const CXLinkageKindDef = ref.types.int;
 export const CXVisibilityKindDef = ref.types.int;
@@ -1264,7 +1264,7 @@ export const CXTypeKindDef = ref.types.int;
 export const CXCallingConvDef = ref.types.int;
 export const CXTypeDef = Struct({
   kind: CXTypeKindDef,
-  data: Array(Pointer(ref.types.void), 2),
+  data: ArrayType(Pointer(ref.types.void), 2),
 });
 export const CXTemplateArgumentKindDef = ref.types.int;
 export const CXTypeNullabilityKindDef = ref.types.int;
@@ -1286,7 +1286,7 @@ export const CXModuleDef = Pointer(ref.types.void);
 export const CXNameRefFlagsDef = ref.types.int;
 export const CXTokenKindDef = ref.types.int;
 export const CXTokenDef = Struct({
-  int_data: Array(ref.types.uint, 4),
+  int_data: ArrayType(ref.types.uint, 4),
   ptr_data: Pointer(ref.types.void),
 });
 export const CXCompletionStringDef = Pointer(ref.types.void);
@@ -1325,7 +1325,7 @@ export const CXIdxClientEntityDef = Pointer(ref.types.void);
 export const CXIdxClientContainerDef = Pointer(ref.types.void);
 export const CXIdxClientASTFileDef = Pointer(ref.types.void);
 export const CXIdxLocDef = Struct({
-  ptr_data: Array(Pointer(ref.types.void), 2),
+  ptr_data: ArrayType(Pointer(ref.types.void), 2),
   int_data: ref.types.uint,
 });
 export const CXIdxIncludedFileInfoDef = Struct({

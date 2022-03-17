@@ -74,6 +74,9 @@ export class TSResolver implements ITypeNameResolver {
   createStruct(str: string): string {
     return str;
   }
+  createUnion(str: string): string {
+    return str;
+  }
   createFunction(str: string): string {
     // TODO(bengreenier): this is a dirty hack that we should probably rethink
     // we are parsing out the ref function format (e.g. `ret, [param1, param2, etc]`)
@@ -162,12 +165,15 @@ export class RefResolver implements ITypeNameResolver {
     return `Pointer(${str})`;
   }
   createArray(str: string): string {
-    return `Array(${str})`;
+    return `ArrayType(${str})`;
   }
   createEnum(str: string): string {
     return `${str}Def`;
   }
   createStruct(str: string): string {
+    return `${str}Def`;
+  }
+  createUnion(str: string): string {
     return `${str}Def`;
   }
   createFunction(str: string): string {

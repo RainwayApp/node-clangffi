@@ -19,6 +19,7 @@ import {
   FunctionDecl,
   ParamDecl,
   StructDecl,
+  UnionDecl,
   TypedefDecl,
 } from "./models/decl";
 import { DesugaredType, Type } from "./models/type";
@@ -26,17 +27,17 @@ import { DesugaredType, Type } from "./models/type";
 /**
  * Internal array type
  */
-const Array = refArrayDi(ref);
+const ArrayType = refArrayDi(ref);
 
 /**
  * Internal type for an `CXUnsavedFile` array
  */
-const UnsavedFileArray = Array(CXUnsavedFileDef);
+const UnsavedFileArray = ArrayType(CXUnsavedFileDef);
 
 /**
  * Internal string array type
  */
-const StringArray = Array(ref.types.CString);
+const StringArray = ArrayType(ref.types.CString);
 
 /**
  * An opaque pointer to an internal `CXIndex`
@@ -224,6 +225,7 @@ export {
   EnumDecl,
   EnumConstantDecl,
   StructDecl,
+  UnionDecl,
   FieldDecl,
   TypedefDecl,
   TranslationUnit,

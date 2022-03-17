@@ -29,11 +29,14 @@ export class Decl extends Cursor {
         return new EnumConstantDecl(native, cursor.kind);
       case CXCursorKind.CXCursor_StructDecl:
         return new StructDecl(native, cursor.kind);
+      case CXCursorKind.CXCursor_UnionDecl:
+        return new UnionDecl(native, cursor.kind);
       case CXCursorKind.CXCursor_FieldDecl:
         return new FieldDecl(native, cursor.kind);
       case CXCursorKind.CXCursor_TypedefDecl:
         return new TypedefDecl(native, cursor.kind);
       default:
+        console.log(cursor.kind);
         return undefined;
     }
   }
@@ -161,6 +164,12 @@ export class EnumConstantDecl extends Decl {
 }
 
 export class StructDecl extends Decl {
+  constructor(ptr: CXCursor, ptrKind: CXCursorKind, parent?: Cursor) {
+    super(ptr, ptrKind, parent);
+  }
+}
+
+export class UnionDecl extends Decl {
   constructor(ptr: CXCursor, ptrKind: CXCursorKind, parent?: Cursor) {
     super(ptr, ptrKind, parent);
   }

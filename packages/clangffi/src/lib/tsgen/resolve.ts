@@ -1,8 +1,8 @@
 import debug from "debug";
 import { Type } from "libclang-bindings";
-import { StringBuilder } from "../string-builder.js";
-import { ITypeNameResolver, LineEndings } from "../types.js";
-import { simpleDesugar } from "../util.js";
+import { StringBuilder } from "../string-builder";
+import { ITypeNameResolver, LineEndings } from "../types";
+import { simpleDesugar } from "../util";
 
 /**
  * log for resolving ref types

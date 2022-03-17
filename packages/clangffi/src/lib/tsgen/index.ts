@@ -13,16 +13,16 @@ import {
   TypedefDecl,
   UnionDecl,
 } from "libclang-bindings";
-import { StringBuilder } from "../string-builder.js";
+import { StringBuilder } from "../string-builder";
 import {
   ISourceGenerator,
   ITypeNameResolver,
   LineEndings,
   SymbolReplacementSpec,
-} from "../types.js";
-import { RefResolver, resolveType, TSResolver } from "./resolve.js";
-import { resolveName, snakeToPascalCase } from "../util.js";
-import { matches } from "../selector.js";
+} from "../types";
+import { RefResolver, resolveType, TSResolver } from "./resolve";
+import { resolveName, snakeToPascalCase } from "../util";
+import { matches } from "../selector";
 
 const log = debug("clangffi:tsgen");
 
@@ -113,7 +113,7 @@ export class TsGen implements ISourceGenerator {
   public close() {
     log(`close(): begin`);
 
-    if (!this.outputPath) {
+    if (this.outputPath === undefined) {
       throw new Error(`close() called before open()`);
     }
 

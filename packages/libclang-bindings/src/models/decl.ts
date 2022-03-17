@@ -36,7 +36,6 @@ export class Decl extends Cursor {
       case CXCursorKind.CXCursor_TypedefDecl:
         return new TypedefDecl(native, cursor.kind);
       default:
-        console.log(cursor.kind);
         return undefined;
     }
   }

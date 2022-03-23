@@ -35,13 +35,7 @@ function runTsGenFileTest(name: string) {
   p.parseAndGenerate();
   expect(wfs).toHaveBeenCalled();
   const output = wfs.mock.calls[0][1] as string;
-  expect(output.trim()).toEqual(
-    fs
-      .readFileSync(`tests/${name}.ts`)
-      .toString()
-      .trim()
-      .replace(/[\r\n]+/g, "\n")
-  );
+  expect(output.trim()).toMatchSnapshot(name);
 }
 
 describe("clangffi", () => {

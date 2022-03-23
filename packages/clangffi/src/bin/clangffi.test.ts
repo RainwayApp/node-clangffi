@@ -45,7 +45,7 @@ function runTsGenFileTest(name: string) {
 }
 
 describe("clangffi", () => {
-  loadLibClang(libClangPath);
+  loadLibClang(process.env["LIBCLANG_LIB_PATH"] ?? libClangPath);
   const files = ["union"];
   for (const file of files) {
     test("tsgen:" + file, () => {

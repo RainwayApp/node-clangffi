@@ -26,7 +26,15 @@ function runTsGenFileTest(name: string) {
       lineEndings: LineEndings.LF,
       usePrettier: true,
       symbols: {
-        remap: [],
+        remap: [
+          // HACK: Remap enums to "int", because they might platform-dependently
+          // be either "uint" or "int", but we don't want this to screw up the
+          // test.
+          {
+            selector: { symbolName: "RainwayInput_Tag", children: [] },
+            replacement: "int",
+          },
+        ],
         hardRemap: [],
       },
       cleanEnumConstants: false,

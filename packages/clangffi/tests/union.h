@@ -11,8 +11,6 @@ typedef enum RainwayInput_Tag
     IDK,
     GAMEPAD,
     MOUSE,
-    FORCE_INTMIN = -2147483648,
-    FORCE_INTMAX = 0x7FFFFFFF,
 } RainwayInput_Tag;
 typedef struct GamepadReport_Body
 {

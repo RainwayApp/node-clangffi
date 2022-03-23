@@ -19,8 +19,6 @@ export enum RainwayInput_Tag {
   IDK = 0,
   GAMEPAD = 1,
   MOUSE = 2,
-  FORCE_INTMIN = 2147483648,
-  FORCE_INTMAX = 2147483647,
 }
 export type GamepadReport_BodyType = UnderlyingType<
   typeof GamepadReport_BodyDef

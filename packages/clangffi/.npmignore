@@ -3,4 +3,5 @@ babel.config.cjs
 *.test.ts
 *.test.js
 src/
+tests/
 CHANGELOG.md

@@ -5,7 +5,7 @@
 
 ### ⚠ BREAKING CHANGES
 
-* **selectors:** * feat(ffi-callback): support `ffi.Callback` params
+* **selectors:** * feat(ffi-callback): support `ffi.Callback` params 
 * **type-decl:** * feat(underlying-type): Use UnderlyingType
 * **allow-symbols:** `allow` flag moved to `allow-file`
 

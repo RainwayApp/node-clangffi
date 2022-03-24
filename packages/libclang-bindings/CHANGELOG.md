@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.1.0](https://github.com/RainwayApp/node-clangffi/compare/libclang-bindings-v3.0.0...libclang-bindings-v3.1.0) (2022-03-24)
+
+
+### Features
+
+* TypeScript codegen for union{} and struct{union{}} ([c37b54b](https://github.com/RainwayApp/node-clangffi/commit/c37b54b8c2aa3932966e40eb586fb75aa1cf311a))
+
+
+### Bug Fixes
+
+* **ci:** Actually snapshots are cool ([8beb6e4](https://github.com/RainwayApp/node-clangffi/commit/8beb6e4f9e64ed56d44e894c18e7f4f0edb5f95b))
+* **ci:** re-enable the big test ([9aa9b25](https://github.com/RainwayApp/node-clangffi/commit/9aa9b256228d1eb1fef415b9a0edb6ab4b8fde4a))
+* **ci:** Use LIBCLANG_LIB_PATH if it is available ([3c480af](https://github.com/RainwayApp/node-clangffi/commit/3c480af33348dd65a0e23adea42aee8d1a007324))
+* Don't console.log ([0696609](https://github.com/RainwayApp/node-clangffi/commit/069660968a8c370a5293cea4a9bd11cdf8434391))
+
 ## [3.0.0](https://github.com/RainwayApp/node-clangffi/compare/libclang-bindings-v2.0.0...libclang-bindings-v3.0.0) (2022-01-12)
 
 

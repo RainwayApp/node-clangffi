@@ -7,19 +7,19 @@ Tools to generate Typescript FFI bindings for C/C++ libraries using [libclang](h
 
 ## Features
 
-- [clangffi](./packages/clangffi) cli tool to generate Typescript bindings.
-- [libclang-bindings](./packages/libclang-bindings) library for [libclang](https://clang.llvm.org/doxygen/group__CINDEX.html) bindings.
+- [clangffi](https://github.com/RainwayApp/node-clangffi/tree/main/packages/clangffi) cli tool to generate Typescript bindings.
+- [libclang-bindings](https://github.com/RainwayApp/node-clangffi/tree/main/packages/libclang-bindings) library for [libclang](https://clang.llvm.org/doxygen/group__CINDEX.html) bindings.
 - Generates Typescript typings and [ref-napi](https://github.com/node-ffi-napi/ref-napi) types.
 - Bring your own `libclang` binary.
-- Validated against [llvm-project 13.0.0](./vendor).
+- Validated against [llvm-project 13.0.0](https://github.com/RainwayApp/node-clangffi/tree/main/vendor).
 
 See the following packages for more information:
 
-- [clangffi](./packages/clangffi) - cli tool for generating bindings
+- [clangffi](https://github.com/RainwayApp/node-clangffi/tree/main/packages/clangffi) - cli tool for generating bindings
 
 ![npm](https://img.shields.io/npm/v/clangffi)
 
-- [libclang-bindings](./packages/libclang-bindings) - libclang bindings for node
+- [libclang-bindings](https://github.com/RainwayApp/node-clangffi/tree/main/packages/libclang-bindings) - libclang bindings for node
 
 ![npm](https://img.shields.io/npm/v/libclang-bindings)
 

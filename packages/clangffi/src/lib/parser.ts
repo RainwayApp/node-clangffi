@@ -20,9 +20,9 @@ import {
   TypedefDecl,
   CXTypeKind,
 } from "libclang-bindings";
-import { ISourceGenerator } from "./types";
-import { formatPath, resolveName } from "./util";
-import { matches, SelectorData } from "./selector";
+import { ISourceGenerator } from "./types.js";
+import { formatPath, resolveName } from "./util.js";
+import { matches, SelectorData } from "./selector.js";
 
 const log = debug("clangffi:parser");
 

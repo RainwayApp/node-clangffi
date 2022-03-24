@@ -1,3 +1,3 @@
-import { Parser, ParserOptions } from "./parser";
+import { Parser, ParserOptions } from "./parser.js";
 
 export { Parser, ParserOptions };

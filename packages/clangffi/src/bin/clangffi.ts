@@ -4,13 +4,13 @@ import { fileURLToPath } from "node:url";
 import fs from "node:fs";
 import path from "node:path";
 import { Language, loadLibClang } from "libclang-bindings";
-import { Parser } from "../lib/index";
-import { TsGen } from "../lib/tsgen/index";
-import { LineEndings } from "../lib/types";
+import { Parser } from "../lib/index.js";
+import { TsGen } from "../lib/tsgen/index.js";
+import { LineEndings } from "../lib/types.js";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import debug from "debug";
-import { parse } from "../lib/selector";
+import { parse } from "../lib/selector.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const log = debug("clangffi");

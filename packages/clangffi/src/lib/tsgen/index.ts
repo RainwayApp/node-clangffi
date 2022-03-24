@@ -13,16 +13,16 @@ import {
   TypedefDecl,
   UnionDecl,
 } from "libclang-bindings";
-import { StringBuilder } from "../string-builder";
+import { StringBuilder } from "../string-builder.js";
 import {
   ISourceGenerator,
   ITypeNameResolver,
   LineEndings,
   SymbolReplacementSpec,
-} from "../types";
-import { RefResolver, resolveType, TSResolver } from "./resolve";
-import { resolveName, snakeToPascalCase } from "../util";
-import { matches } from "../selector";
+} from "../types.js";
+import { RefResolver, resolveType, TSResolver } from "./resolve.js";
+import { resolveName, snakeToPascalCase } from "../util.js";
+import { matches } from "../selector.js";
 
 const log = debug("clangffi:tsgen");
 

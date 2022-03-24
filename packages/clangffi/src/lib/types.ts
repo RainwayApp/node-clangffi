@@ -8,7 +8,7 @@ import {
   FunctionDecl,
   ParamDecl,
 } from "libclang-bindings";
-import { SelectorData } from "./selector";
+import { SelectorData } from "./selector.js";
 
 export interface ISourceGenerator {
   open(outputPath: string): void;

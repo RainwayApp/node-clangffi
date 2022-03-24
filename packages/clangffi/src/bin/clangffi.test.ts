@@ -1,5 +1,5 @@
 import { Language, loadLibClang } from "libclang-bindings";
-import { Parser } from "../lib";
+import { Parser } from "../lib/parser";
 import { TsGen } from "../lib/tsgen";
 import { LineEndings } from "../lib/types";
 import fs from "node:fs";

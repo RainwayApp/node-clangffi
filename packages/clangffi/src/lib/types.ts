@@ -3,11 +3,12 @@ import {
   EnumConstantDecl,
   TypedefDecl,
   StructDecl,
+  UnionDecl,
   FieldDecl,
   FunctionDecl,
   ParamDecl,
 } from "libclang-bindings";
-import { SelectorData } from "./selector.js";
+import { SelectorData } from "./selector";
 
 export interface ISourceGenerator {
   open(outputPath: string): void;
@@ -22,9 +23,12 @@ export interface ISourceGenerator {
   closeTypedef(decl: TypedefDecl): void;
 
   openStruct(decl: StructDecl): void;
-  openStructField(decl: FieldDecl): void;
-  closeStructField(decl: FieldDecl): void;
+  openField(decl: FieldDecl): void;
+  closeField(decl: FieldDecl): void;
   closeStruct(decl: StructDecl): void;
+
+  openUnion(decl: UnionDecl): void;
+  closeUnion(decl: UnionDecl): void;
 
   openFunction(decl: FunctionDecl): void;
   openFunctionParam(decl: ParamDecl): void;
@@ -110,6 +114,7 @@ export interface ITypeNameResolver {
   createArray(str: string): string;
   createEnum(str: string): string;
   createStruct(str: string): string;
+  createUnion(str: string): string;
   createFunction(str: string): string;
   createUnknown(str: string): string;
 }

@@ -11,17 +11,18 @@ import {
   StructDecl,
   Type,
   TypedefDecl,
+  UnionDecl,
 } from "libclang-bindings";
-import { StringBuilder } from "../string-builder.js";
+import { StringBuilder } from "../string-builder";
 import {
   ISourceGenerator,
   ITypeNameResolver,
   LineEndings,
   SymbolReplacementSpec,
-} from "../types.js";
-import { RefResolver, resolveType, TSResolver } from "./resolve.js";
-import { resolveName, snakeToPascalCase } from "../util.js";
-import { matches } from "../selector.js";
+} from "../types";
+import { RefResolver, resolveType, TSResolver } from "./resolve";
+import { resolveName, snakeToPascalCase } from "../util";
+import { matches } from "../selector";
 
 const log = debug("clangffi:tsgen");
 
@@ -88,11 +89,13 @@ export class TsGen implements ISourceGenerator {
     this.typingsBuilder.appendLine(
       `import refStructDi, {StructObject} from "ref-struct-di";`
     );
-    this.typingsBuilder
-      .appendLine(`import refArrayDi, {TypedArray} from "ref-array-di";
-    `);
+    this.typingsBuilder.appendLine(
+      `import refArrayDi, {TypedArray} from "ref-array-di";`
+    );
+    this.typingsBuilder.appendLine(`import refUnionDi from "ref-union-di";`);
     this.typingsBuilder.appendLine(`const Struct = refStructDi(ref);`);
-    this.typingsBuilder.appendLine(`const Array = refArrayDi(ref);`);
+    this.typingsBuilder.appendLine(`const Union = refUnionDi(ref);`);
+    this.typingsBuilder.appendLine(`const ArrayType = refArrayDi(ref);`);
     this.typingsBuilder.appendLine(`const Pointer = ref.refType;`);
 
     this.fnBuilder.appendLine(`export function dlopen(libPath: string) {`);
@@ -110,7 +113,7 @@ export class TsGen implements ISourceGenerator {
   public close() {
     log(`close(): begin`);
 
-    if (!this.outputPath) {
+    if (this.outputPath === undefined) {
       throw new Error(`close() called before open()`);
     }
 
@@ -138,7 +141,7 @@ export class TsGen implements ISourceGenerator {
   }
 
   // `openEnum` saves the enum name here for `openEnumConstant` to use.
-  currentEnumName: string = "";
+  private currentEnumName: string = "";
 
   public openEnum(decl: EnumDecl) {
     const name = resolveName(decl);
@@ -219,34 +222,54 @@ export class TsGen implements ISourceGenerator {
     // nothing to do
   }
 
+  private currentStructName: string = "";
+
+  /// We generate structs in a separate builder, then dump it to the main one at
+  /// the end. This way if we encounter anonymous unions in a struct, we can
+  /// emit their definitions before the struct they're in.
+  private structTypingsBuilder: StringBuilder | undefined;
+  private structNativeBuilder: StringBuilder | undefined;
+
   public openStruct(decl: StructDecl) {
     const name = resolveName(decl);
+    if (name === undefined) {
+      throw new Error("struct name undefined");
+    }
+    this.currentStructName = name;
+    this.structTypingsBuilder = new StringBuilder(this.opts.lineEndings);
+    this.structNativeBuilder = new StringBuilder(this.opts.lineEndings);
     log(`openStruct(${name}): begin`);
 
-    this.typingsBuilder.appendLine(
+    this.structTypingsBuilder.appendLine(
       `export type ${name}Type = UnderlyingType<typeof ${name}Def>;`
     );
-    this.typingsBuilder.appendLine(`export interface ${name} {`);
-    this.nativeBuilder.appendLine(`export const ${name}Def = Struct({`);
+    this.structTypingsBuilder.appendLine(`export interface ${name} {`);
+    this.structNativeBuilder.appendLine(`export const ${name}Def = Struct({`);
 
     log(`openStruct(${name}): end`);
   }
 
-  public openStructField(decl: FieldDecl) {
+  public openField(decl: FieldDecl) {
     const name = resolveName(decl);
-    log(`openStructField(${name}): begin`);
+    log(`openField(${name}): begin`);
 
-    this.typingsBuilder.appendLine(
-      `${name}: ${this.resolveType(name, decl.typeClass, this.tsResolver)};`
-    );
-    this.nativeBuilder.appendLine(
-      `${name}: ${this.resolveType(name, decl.typeClass, this.refResolver)},`
-    );
+    const tsType = this.resolveType(name, decl.typeClass, this.tsResolver);
+    const typings = `${name}: ${tsType},`;
+    const refType = this.resolveType(name, decl.typeClass, this.refResolver);
+    const native = `${name}: ${refType},`;
 
-    log(`openStructField(${name}): end`);
+    if (this.inUnion) {
+      this.typingsBuilder.appendLine(typings);
+      this.nativeBuilder.appendLine(native);
+    } else {
+      this.structTypingsBuilder!.appendLine(typings);
+      this.structNativeBuilder!.appendLine(native);
+    }
+
+    log(`openField(${name}): end`);
   }
 
-  public closeStructField(decl: FieldDecl) {
+  public closeField(decl: FieldDecl) {
     // nothing to do
   }
 
@@ -254,10 +277,54 @@ export class TsGen implements ISourceGenerator {
     const name = resolveName(decl);
     log(`closeStruct(${name}): begin`);
 
-    this.typingsBuilder.appendLine(`}`);
-    this.nativeBuilder.appendLine(`});`);
+    this.structTypingsBuilder!.appendLine(`}`);
+    this.typingsBuilder.appendLine(this.structTypingsBuilder!.toString());
+    this.structTypingsBuilder = undefined;
+
+    this.structNativeBuilder!.appendLine(`});`);
+    this.nativeBuilder.appendLine(this.structNativeBuilder!.toString());
+    this.structNativeBuilder = undefined;
 
     log(`closeStruct(${name}): end`);
+  }
+
+  private inUnion: boolean = false;
+  public openUnion(decl: UnionDecl) {
+    let name = resolveName(decl);
+    this.inUnion = true;
+    if (
+      this.structTypingsBuilder &&
+      this.structNativeBuilder &&
+      name?.includes("anonymous at")
+    ) {
+      name = this.currentStructName + "_Union";
+      log(`openUnion(${name}): is anonymous!`);
+      this.structTypingsBuilder.appendLine(`union: ${name},`);
+      this.structNativeBuilder.appendLine(`union: ${name}Def,`);
+    }
+    log(`openUnion(${name}): begin`);
+
+    this.typingsBuilder.appendLine(
+      `export type ${name}Type = UnderlyingType<typeof ${name}Def>;`
+    );
+    this.typingsBuilder.appendLine(`export interface ${name} {`);
+    this.nativeBuilder.appendLine(`export const ${name}Def = Union({`);
+
+    log(`openUnion(${name}): end`);
+  }
+
+  public closeUnion(decl: UnionDecl) {
+    let name = resolveName(decl);
+    if (name?.includes("anonymous at")) {
+      name = this.currentStructName + "_Union";
+    }
+    log(`closeUnion(${name}): begin`);
+
+    this.typingsBuilder.appendLine(`}`);
+    this.nativeBuilder.appendLine(`});`);
+    this.inUnion = false;
+
+    log(`closeUnion(${name}): end`);
   }
 
   public openFunction(decl: FunctionDecl) {

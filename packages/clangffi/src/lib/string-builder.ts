@@ -1,4 +1,4 @@
-import { LineEndings } from "./types.js";
+import { LineEndings } from "./types";
 
 export class StringBuilder {
   private buffer: string[] = [];

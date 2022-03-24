@@ -1,8 +1,8 @@
 import debug from "debug";
 import { Type } from "libclang-bindings";
-import { StringBuilder } from "../string-builder.js";
-import { ITypeNameResolver, LineEndings } from "../types.js";
-import { simpleDesugar } from "../util.js";
+import { StringBuilder } from "../string-builder";
+import { ITypeNameResolver, LineEndings } from "../types";
+import { simpleDesugar } from "../util";
 
 /**
  * log for resolving ref types
@@ -72,6 +72,9 @@ export class TSResolver implements ITypeNameResolver {
     return str;
   }
   createStruct(str: string): string {
+    return str;
+  }
+  createUnion(str: string): string {
     return str;
   }
   createFunction(str: string): string {
@@ -162,12 +165,15 @@ export class RefResolver implements ITypeNameResolver {
     return `Pointer(${str})`;
   }
   createArray(str: string): string {
-    return `Array(${str})`;
+    return `ArrayType(${str})`;
   }
   createEnum(str: string): string {
     return `${str}Def`;
   }
   createStruct(str: string): string {
+    return `${str}Def`;
+  }
+  createUnion(str: string): string {
     return `${str}Def`;
   }
   createFunction(str: string): string {

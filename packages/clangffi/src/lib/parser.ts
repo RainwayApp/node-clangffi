@@ -14,14 +14,15 @@ import {
   Decl,
   FunctionDecl,
   StructDecl,
+  UnionDecl,
   FieldDecl,
   ParamDecl,
   TypedefDecl,
   CXTypeKind,
 } from "libclang-bindings";
-import { ISourceGenerator } from "./types.js";
-import { formatPath, resolveName } from "./util.js";
-import { matches, SelectorData } from "./selector.js";
+import { ISourceGenerator } from "./types";
+import { formatPath, resolveName } from "./util";
+import { matches, SelectorData } from "./selector";
 
 const log = debug("clangffi:parser");
 
@@ -165,8 +166,10 @@ export class Parser {
         this.opts.generator.openEnumConstant(decl as EnumConstantDecl);
       } else if (decl instanceof StructDecl) {
         this.opts.generator.openStruct(decl as StructDecl);
+      } else if (decl instanceof UnionDecl) {
+        this.opts.generator.openUnion(decl as UnionDecl);
       } else if (decl instanceof FieldDecl) {
-        this.opts.generator.openStructField(decl as FieldDecl);
+        this.opts.generator.openField(decl as FieldDecl);
       } else if (decl instanceof FunctionDecl) {
         this.opts.generator.openFunction(decl as FunctionDecl);
       } else if (decl instanceof ParamDecl) {
@@ -177,7 +180,8 @@ export class Parser {
       if (
         decl instanceof EnumDecl ||
         decl instanceof FunctionDecl ||
-        decl instanceof StructDecl
+        decl instanceof StructDecl ||
+        decl instanceof UnionDecl
       ) {
         // we need to bind so that `this` is correctly pointing at our instance of parser
         // inside the `visit` method when it's executed
@@ -204,8 +208,10 @@ export class Parser {
         this.opts.generator.closeEnumConstant(decl as EnumConstantDecl);
       } else if (decl instanceof StructDecl) {
         this.opts.generator.closeStruct(decl as StructDecl);
+      } else if (decl instanceof UnionDecl) {
+        this.opts.generator.closeUnion(decl as UnionDecl);
       } else if (decl instanceof FieldDecl) {
-        this.opts.generator.closeStructField(decl as FieldDecl);
+        this.opts.generator.closeField(decl as FieldDecl);
       } else if (decl instanceof FunctionDecl) {
         this.opts.generator.closeFunction(decl as FunctionDecl);
       } else if (decl instanceof ParamDecl) {

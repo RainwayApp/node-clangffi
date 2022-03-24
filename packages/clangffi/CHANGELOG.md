@@ -1,5 +1,13 @@
 # Changelog
 
+### [4.2.1](https://github.com/RainwayApp/node-clangffi/compare/clangffi-v4.2.0...clangffi-v4.2.1) (2022-03-24)
+
+
+### Bug Fixes
+
+* **jest:** Add "moduleNameMapper" that strips .js extensions ([7c894bd](https://github.com/RainwayApp/node-clangffi/commit/7c894bdbd09e14da62c4ee20b41743a78e4dcc29))
+* Restore ".js" in relative imports ([ba84ae9](https://github.com/RainwayApp/node-clangffi/commit/ba84ae94e07ff3d3b64b8a10582f132061e9c6be))
+
 ## [4.2.0](https://github.com/RainwayApp/node-clangffi/compare/clangffi-v4.1.0...clangffi-v4.2.0) (2022-03-24)
 
 

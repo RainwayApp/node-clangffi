@@ -1,5 +1,27 @@
 # Changelog
 
+## [4.2.0](https://github.com/RainwayApp/node-clangffi/compare/clangffi-v4.1.0...clangffi-v4.2.0) (2022-03-24)
+
+
+### Features
+
+* TypeScript codegen for union{} and struct{union{}} ([c37b54b](https://github.com/RainwayApp/node-clangffi/commit/c37b54b8c2aa3932966e40eb586fb75aa1cf311a))
+
+
+### Bug Fixes
+
+* **ci:** Actually snapshots are cool ([8beb6e4](https://github.com/RainwayApp/node-clangffi/commit/8beb6e4f9e64ed56d44e894c18e7f4f0edb5f95b))
+* **ci:** oh jeez, can I force a unified enum ABI ([d93ef69](https://github.com/RainwayApp/node-clangffi/commit/d93ef69b715a9418ec8b93129be41ced3305b8a2))
+* **ci:** Use LIBCLANG_LIB_PATH if it is available ([3c480af](https://github.com/RainwayApp/node-clangffi/commit/3c480af33348dd65a0e23adea42aee8d1a007324))
+* **ci:** use remap instead of icky forcing ([d01449f](https://github.com/RainwayApp/node-clangffi/commit/d01449f4eee3205b03a1198c0c873643d1e6983d))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * libclang-bindings bumped from ^3.0.0 to ^3.1.0
+
 ## [4.1.0](https://github.com/RainwayApp/node-clangffi/compare/clangffi-v4.0.0...clangffi-v4.1.0) (2022-03-15)
 
 

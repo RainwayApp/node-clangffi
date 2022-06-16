@@ -39,6 +39,11 @@ export function simpleDesugar(type: Type) {
     desugarLog(`removed enum prefix: '${desugared}'`);
   }
 
+  if (desugared.startsWith("union ")) {
+    desugared = desugared.replace("union ", "");
+    desugarLog(`removed union prefix: '${desugared}'`);
+  }
+
   return desugared;
 }
 

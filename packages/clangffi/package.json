@@ -1,6 +1,6 @@
 {
   "name": "clangffi",
-  "version": "4.2.1", 
+  "version": "4.2.2",
   "description": "Generate Typescript FFI bindings for C/C++ libraries using libclang and ffi-napi",
   "type": "module",
   "exports": "./dist/lib/index.js",
@@ -49,7 +49,7 @@
   "dependencies": {
     "matcher": "^5.0.0",
     "debug": "^4.3.3",
-    "libclang-bindings": "^3.1.0",
+    "libclang-bindings": "^3.1.1",
     "prettier": "^2.5.1",
     "yargs": "^17.3.1"
   },

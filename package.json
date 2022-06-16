@@ -5,7 +5,7 @@
   "description": "lerna workspace for clangffi, libclang-bindings tools",
   "scripts": {
     "clangffi": "node packages/clangffi/dist/bin/clangffi.js",
-    "generate-dogfood": "npm run clangffi -- -i vendor/llvm-project/clang/include/clang-c/Index.h -I vendor/llvm-project/clang/include/ -o packages/libclang-bindings/src/libclang.ts --include *time*_t --include-file vendor/llvm-project/clang/include/clang-c/",
+    "generate-dogfood": "npm run clangffi -- --clean-enum-constants=false -i vendor/llvm-project/clang/include/clang-c/Index.h -I vendor/llvm-project/clang/include/ -o packages/libclang-bindings/src/libclang.ts --include *time*_t --include-file vendor/llvm-project/clang/include/clang-c/",
     "bootstrap": "lerna bootstrap",
     "build": "lerna run build --stream",
     "test": "lerna run test --stream"
@@ -14,5 +14,8 @@
   "license": "MIT",
   "devDependencies": {
     "lerna": "^4.0.0"
+  },
+  "volta": {
+    "node": "17.9.1"
   }
 }

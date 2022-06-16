@@ -21,7 +21,7 @@ import {
   CXTypeKind,
 } from "libclang-bindings";
 import { ISourceGenerator } from "./types.js";
-import { formatPath, resolveName } from "./util.js";
+import { formatPath, resolveName, simpleDesugar } from "./util.js";
 import { matches, SelectorData } from "./selector.js";
 
 const log = debug("clangffi:parser");
@@ -192,9 +192,20 @@ export class Parser {
       if (decl instanceof TypedefDecl) {
         const td = decl as TypedefDecl;
 
+        const canonicalType = td.underlyingTypeClass.isCanonical
+          ? td.underlyingTypeClass
+          : td.underlyingTypeClass.canonicalType;
+        const canonicalName = canonicalType
+          ? simpleDesugar(canonicalType)
+          : td.name;
+
         // elaborated types will be auto walked already
         // for non elaborate types we need to manually walk em
-        if (td.underlyingTypeClass.kind != CXTypeKind.CXType_Elaborated) {
+        // we also manually walk if the typedef name and the underlying class name don't align
+        if (
+          td.underlyingTypeClass.kind != CXTypeKind.CXType_Elaborated ||
+          symbolName !== canonicalName
+        ) {
           this.opts.generator.openTypedef(td);
           visit(decl, this.visit.bind(this));
           this.opts.generator.closeTypedef(td);

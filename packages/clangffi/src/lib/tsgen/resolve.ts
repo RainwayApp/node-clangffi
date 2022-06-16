@@ -244,6 +244,13 @@ export function resolveType(type: Type, resolver: ITypeNameResolver): string {
     // here we pull off the struct sugar before creating the resolved type
     sb.append(resolver.createStruct(type.name.substring("struct ".length)));
   }
+  // union (not just all records, only those that are unions)
+  else if (type.isRecordType && type.name.startsWith("union ")) {
+    resolveLog(`${type.name} is union`);
+
+    // here we pull off the union sugar before creating the resolved type
+    sb.append(resolver.createUnion(type.name.substring("union ".length)));
+  }
   // array
   else if (type.isArrayType && type.elementType) {
     resolveLog(`${type.name} is array`);

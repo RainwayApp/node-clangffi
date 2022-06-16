@@ -29,6 +29,16 @@ export function simpleDesugar(type: Type) {
     desugarLog(`removed const: '${desugared}'`);
   }
 
+  if (desugared.startsWith("struct ")) {
+    desugared = desugared.replace("struct ", "");
+    desugarLog(`removed struct prefix: '${desugared}'`);
+  }
+
+  if (desugared.startsWith("enum ")) {
+    desugared = desugared.replace("enum ", "");
+    desugarLog(`removed enum prefix: '${desugared}'`);
+  }
+
   return desugared;
 }
 

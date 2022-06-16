@@ -45,6 +45,7 @@ Options:
       --include-file         File paths to explicitly include symbols from, in addition to the default. If a directory path is given symbols from all files in that directory will be included.                                         [array] [default: []]
       --exclude              Symbols to explicitly exclude from the bindings. Overrides `include` if there is a conflict.                                                                                                               [array] [default: []]
       --hard-remap, --remap  Custom native to node symbol mappings that override the default.                                                                                                                                           [array] [default: []]
+      --clean-enum-constants  Convert constant names like `ENUM_NAME_FOO_BAR` to `FooBar` in enums.                                                                                                                                 [boolean] [default: true]
       --help                 Show help                                                                                                                                                                                                              [boolean]
 
 Examples:

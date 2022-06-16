@@ -34,6 +34,7 @@
     "@types/ref-array-di": "^1.2.3",
     "@types/ref-napi": "^3.0.4",
     "@types/ref-struct-di": "^1.1.5",
+    "@types/ref-union-di": "^1.0.3",
     "babel-jest": "^27.4.5",
     "jest": "^27.4.5",
     "typescript": "^4.5.4"
@@ -42,7 +43,8 @@
     "ffi-napi": "^4.0.3",
     "ref-array-di": "^1.2.2",
     "ref-napi": "^3.0.3",
-    "ref-struct-di": "^1.1.1"
+    "ref-struct-di": "^1.1.1",
+    "ref-union-di": "^1.0.1"
   },
   "engines": {
     "node": ">=17.x"

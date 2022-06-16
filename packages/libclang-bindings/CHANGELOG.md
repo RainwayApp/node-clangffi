@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.1](https://github.com/RainwayApp/node-clangffi/compare/libclang-bindings-v3.1.0...libclang-bindings-v3.1.1) (2022-06-16)
+
+
+### Bug Fixes
+
+* **struct-alias:** Support struct typedef aliasing ([#58](https://github.com/RainwayApp/node-clangffi/issues/58)) ([94b867a](https://github.com/RainwayApp/node-clangffi/commit/94b867a90bfbdb2d4ebabd192b6351901ced25ef))
+
 ## [3.1.0](https://github.com/RainwayApp/node-clangffi/compare/libclang-bindings-v3.0.0...libclang-bindings-v3.1.0) (2022-03-24)
 
 
